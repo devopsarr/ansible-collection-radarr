@@ -1,0 +1,34 @@
+---
+    - name: create root folder
+      devopsarr.radarr.radarr_root_folder:
+        path: '/tmp'
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert root folder creation
+      assert:
+        that:
+          - result['path'] == '/tmp'
+    # ----------------------------------------------------------------------------
+    - name: create already present root folder
+      devopsarr.radarr.radarr_root_folder:
+        path: '/tmp'
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert root folder idempotency
+      assert:
+        that:
+          - result.changed == false
+    # ----------------------------------------------------------------------------
+    - name: delete root folder
+      devopsarr.radarr.radarr_root_folder:
+        path: '/tmp'
+        state: 'absent'
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert root folder deletion
+      assert:
+        that:
+          - result['id'] == 0
