@@ -1,7 +1,7 @@
 # Radarr Collection for Ansible
 [![CI](https://github.com/devopsarr/ansible-collection-radarr/workflows/CI/badge.svg?event=push)](https://github.com/devopsarr/ansible-collection-radarr/actions) [![Codecov](https://img.shields.io/codecov/c/github/devopsarr/ansible-collection-radarr)](https://codecov.io/gh/adevopsarr/ansible-collection-radarr)
 
-Ansible colletion for Radarr based on [pyarr SDK](https://github.com/totaldebug/pyarr)
+Ansible collection for Radarr based on [radarr-py SDK](https://github.com/devopsarr/radarr-py)
 ## Code of Conduct
 
 We follow the [Ansible Code of Conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html) in all our interactions within this project.

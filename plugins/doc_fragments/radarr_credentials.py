@@ -18,6 +18,6 @@ options:
     type: str
     required: true
 notes:
-  - for authentication, you can set service_account_file using the c(SONARR_URL) env variable.
-  - for authentication, you can set service_account_contents using the c(SONARR_API_KEY) env variable.
+  - for authentication, you can set service_account_file using the c(RADARR_URL) env variable.
+  - for authentication, you can set service_account_contents using the c(RADARR_API_KEY) env variable.
 '''
