@@ -1,0 +1,30 @@
+---
+version: "3.9"
+services:
+  radarr:
+    image: hotio/radarr:release@sha256:fb2b246c05364729a8de4a98030fea361b3c672a29fc7267703c0c8c82dc04a0
+    container_name: radarr
+    depends_on:
+      - transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=Europe/London
+    volumes:
+      - ./test.sh:/scripts/test.sh
+      - ./config.xml:/config/config.xml
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7878/system/status"]
+  transmission:
+    image: linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    ports:
+      - 9091:9091
