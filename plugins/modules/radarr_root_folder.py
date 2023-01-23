@@ -8,21 +8,21 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: radarr_tag
+module: radarr_root_folder
 
-short_description: Manages Radarr tag.
+short_description: Manages Radarr root folder.
 
-version_added: "0.0.1"
+version_added: "0.0.2"
 
-description: Manages Radarr tag.
+description: Manages Radarr root folder.
 
 options:
-    label:
-        description: Actual tag.
+    path:
+        description: Actual root folder.
         required: true
         type: str
     state:
-        description: Create or delete a tag.
+        description: Create or delete a root_folder.
         required: false
         default: 'present'
         choices: [ "present", "absent" ]
@@ -36,34 +36,45 @@ author:
 '''
 
 EXAMPLES = r'''
-# Create a tag
-- name: Create a tag
-  devopsarr.radarr.tag:
-    label: default
+# Create a root folder
+- name: Create a root folder
+  devopsarr.radarr.root_folder:
+    path: '/series'
 
-# Delete a tag
-- name: Delete a tag
-  devopsarr.radarr.tag:
-    label: wrong
+# Delete a root folder
+- name: Delete a root_folder
+  devopsarr.radarr.root_folder:
+    path: '/series'
     state: absent
 '''
 
 RETURN = r'''
 # These are examples of possible return values, and in general should use other names for return values.
 id:
-    description: Tag ID.
+    description: root folder ID.
     type: int
     returned: always
     sample: '1'
-label:
-    description: The output message that the test module generates.
+path:
+    description: The root folder path.
     type: str
     returned: 'on create/update'
-    sample: 'hd'
+    sample: '/series'
+accessible:
+    description: Access flag.
+    type: str
+    returned: 'on create/update'
+    sample: 'true'
+unmapped_folders:
+    description: List of unmapped folders
+    type: dict
+    returned: always
+    sample: '[]'
 '''
 
 from ansible_collections.devopsarr.radarr.plugins.module_utils.radarr_module import RadarrModule
 from ansible.module_utils.common.text.converters import to_native
+
 
 try:
     import radarr
@@ -75,8 +86,8 @@ except ImportError:
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
-        # TODO: add validation for lowercase tags
-        label=dict(type='str', required=True),
+        # TODO: add validation for root folders
+        path=dict(type='str', required=True),
         state=dict(default='present', type='str', choices=['present', 'absent']),
     )
 
@@ -90,18 +101,18 @@ def run_module():
         supports_check_mode=True
     )
 
-    client = radarr.TagApi(module.api)
+    client = radarr.RootFolderApi(module.api)
 
     # List resources.
     try:
-        tags = client.list_tag()
+        root_folders = client.list_root_folder()
     except Exception as e:
-        module.fail_json('Error listing tags: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing root folders: %s' % to_native(e.reason), **result)
 
     # Check if a resource is present already.
-    for tag in tags:
-        if tag['label'] == module.params['label']:
-            result.update(tag)
+    for root_folder in root_folders:
+        if root_folder['path'] == module.params['path']:
+            result.update(root_folder)
 
     # Create a new resource.
     if module.params['state'] == 'present' and result['id'] == 0:
@@ -109,11 +120,9 @@ def run_module():
         # Only without check mode.
         if not module.check_mode:
             try:
-                response = client.create_tag(tag_resource={
-                    'label': module.params['label'],
-                })
+                response = client.create_root_folder(root_folder_resource={'path': module.params['path']})
             except Exception as e:
-                module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
+                module.fail_json('Error creating root folder: %s' % to_native(e.reason), **result)
             result.update(response)
 
     # Delete the resource.
@@ -122,9 +131,9 @@ def run_module():
         # Only without check mode.
         if not module.check_mode:
             try:
-                response = client.delete_tag(result['id'])
+                response = client.delete_root_folder(result['id'])
             except Exception as e:
-                module.fail_json('Error deleting tag: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting root folder: %s' % to_native(e.reason), **result)
             result['id'] = 0
 
     module.exit_json(**result)

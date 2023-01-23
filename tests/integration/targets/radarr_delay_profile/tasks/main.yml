@@ -1,0 +1,75 @@
+---
+    - name: create tag for delay profile
+      devopsarr.radarr.radarr_tag:
+        label: "delay_profile_test"
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: tag
+    - name: create delay profile
+      devopsarr.radarr.radarr_delay_profile:
+        preferred_protocol: torrent
+        usenet_delay: 0
+        torrent_delay: 0
+        order: 100
+        enable_usenet: true
+        enable_torrent: true
+        bypass_if_highest_quality: false
+        tags: ["{{ tag.id }}"]
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert delay profile creation
+      assert:
+        that:
+          - result['preferred_protocol'] == 'torrent'
+    # ----------------------------------------------------------------------------
+    - name: edit already present delay profile
+      devopsarr.radarr.radarr_delay_profile:
+        preferred_protocol: torrent
+        usenet_delay: 10
+        torrent_delay: 0
+        order: 100
+        enable_usenet: true
+        enable_torrent: true
+        bypass_if_highest_quality: false
+        tags: ["{{ tag.id }}"]
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert delay profile changes
+      assert:
+        that:
+          - result.changed == true
+          - result.usenet_delay == 10
+    # ----------------------------------------------------------------------------
+    - name: test idempotency
+      devopsarr.radarr.radarr_delay_profile:
+        preferred_protocol: torrent
+        usenet_delay: 10
+        torrent_delay: 0
+        order: 100
+        enable_usenet: true
+        enable_torrent: true
+        bypass_if_highest_quality: false
+        tags: ["{{ tag.id }}"]
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+      register: result
+    - name: assert delay profile idempotency
+      assert:
+        that:
+          - result.changed == false
+          - result.usenet_delay == 10
+    # ----------------------------------------------------------------------------
+    - name: delete delay profile
+      devopsarr.radarr.radarr_delay_profile:
+        tags: ["{{ tag.id }}"]
+        preferred_protocol: 'torrent'
+        radarr_api_key: "{{ radarr_api_key }}"
+        radarr_url: "{{ radarr_url }}"
+        state: 'absent'
+      register: result
+    - name: assert delay profile deletion
+      assert:
+        that:
+          - result['id'] == 0
