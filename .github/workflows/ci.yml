@@ -1,8 +1,11 @@
 name: CI
 on:
   pull_request:
-    branches:
-      - 'main'
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'CHANGELOG.rst'
+      - 'changelogs/**'
   push:
     branches:
       - main
