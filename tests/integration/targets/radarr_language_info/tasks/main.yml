@@ -1,0 +1,23 @@
+---
+- name: list a single language
+  devopsarr.radarr.radarr_language_info:
+    name: "English"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single language
+  assert:
+    that:
+      - result['languages'][0]['name'] == 'English'
+# ----------------------------------------------------------------------------
+- name: list all languages
+  devopsarr.radarr.radarr_language_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple languages
+  assert:
+    that:
+      - result['languages'] | length > 1

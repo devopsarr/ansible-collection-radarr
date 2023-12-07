@@ -1,0 +1,23 @@
+---
+- name: tag a single auto tag schema
+  devopsarr.radarr.radarr_auto_tag_schema_info:
+    name: "OriginalLanguageSpecification"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single auto tag schema
+  assert:
+    that:
+      - result['auto_tags'][0]['implementation'] == 'OriginalLanguageSpecification'
+# ----------------------------------------------------------------------------
+- name: tag all auto tag schemas
+  devopsarr.radarr.radarr_auto_tag_schema_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple auto tag schemas
+  assert:
+    that:
+      - result['auto_tags'] | length > 1

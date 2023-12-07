@@ -1,0 +1,23 @@
+---
+- name: list a single import list schema
+  devopsarr.radarr.radarr_import_list_schema_info:
+    name: "PlexImport"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single import list schema
+  assert:
+    that:
+      - result['import_lists'][0]['implementation'] == 'PlexImport'
+# ----------------------------------------------------------------------------
+- name: list all import list schemas
+  devopsarr.radarr.radarr_import_list_schema_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple import list schemas
+  assert:
+    that:
+      - result['import_lists'] | length > 1

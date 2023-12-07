@@ -1,0 +1,47 @@
+---
+- name: create notification
+  devopsarr.radarr.radarr_notification:
+    name: "{{ item }}"
+    config_contract: "CustomScriptSettings"
+    implementation: "CustomScript"
+    fields:
+    - name: "path"
+      value: "/scripts/test.sh"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - 'info_test'
+    - 'info_test1'
+
+- name: list a single notification
+  devopsarr.radarr.radarr_notification_info:
+    name: "info_test"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single notification
+  assert:
+    that:
+      - result['notifications'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: list all notifications
+  devopsarr.radarr.radarr_notification_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple notifications
+  assert:
+    that:
+      - result['notifications'] | length > 1
+# ----------------------------------------------------------------------------
+- name: clean up notification
+  devopsarr.radarr.radarr_notification:
+    name: "{{ item }}"
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - 'info_test'
+    - 'info_test1'

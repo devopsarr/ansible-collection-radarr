@@ -21,21 +21,17 @@ options:
         description: Actual root folder.
         required: true
         type: str
-    state:
-        description: Create or delete a root_folder.
-        required: false
-        default: 'present'
-        choices: [ "present", "absent" ]
-        type: str
 
 extends_documentation_fragment:
     - devopsarr.radarr.radarr_credentials
+    - devopsarr.radarr.radarr_state
 
 author:
     - Fuochi (@Fuochi)
 '''
 
 EXAMPLES = r'''
+---
 # Create a root folder
 - name: Create a root folder
   devopsarr.radarr.root_folder:
@@ -75,7 +71,6 @@ unmapped_folders:
 from ansible_collections.devopsarr.radarr.plugins.module_utils.radarr_module import RadarrModule
 from ansible.module_utils.common.text.converters import to_native
 
-
 try:
     import radarr
     HAS_RADARR_LIBRARY = True
@@ -83,59 +78,84 @@ except ImportError:
     HAS_RADARR_LIBRARY = False
 
 
-def run_module():
+def init_module_args():
     # define available arguments/parameters a user can pass to the module
-    module_args = dict(
-        # TODO: add validation for root folders
+    return dict(
         path=dict(type='str', required=True),
         state=dict(default='present', type='str', choices=['present', 'absent']),
     )
 
+
+def create_root_folder(want, result):
+    result['changed'] = True
+    # Only without check mode.
+    if not module.check_mode:
+        try:
+            response = client.create_root_folder(root_folder_resource=want)
+        except Exception as e:
+            module.fail_json('Error creating root folder: %s' % to_native(e.reason), **result)
+        result.update(response.dict(by_alias=False))
+    module.exit_json(**result)
+
+
+def list_root_folders(result):
+    try:
+        return client.list_root_folder()
+    except Exception as e:
+        module.fail_json('Error listing root folders: %s' % to_native(e.reason), **result)
+
+
+def find_root_folder(path, result):
+    for folder in list_root_folders(result):
+        if folder['path'] == path:
+            return folder
+    return None
+
+
+def delete_root_folder(result):
+    if result['id'] != 0:
+        result['changed'] = True
+        if not module.check_mode:
+            try:
+                client.delete_root_folder(result['id'])
+            except Exception as e:
+                module.fail_json('Error deleting root folder: %s' % to_native(e.reason), **result)
+            result['id'] = 0
+    module.exit_json(**result)
+
+
+def run_module():
+    global client
+    global module
+
+    # Define available arguments/parameters a user can pass to the module
+    module = RadarrModule(
+        argument_spec=init_module_args(),
+        supports_check_mode=True,
+    )
+
+    # Init client and result.
+    client = radarr.RootFolderApi(module.api)
     result = dict(
         changed=False,
         id=0,
     )
 
-    module = RadarrModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    client = radarr.RootFolderApi(module.api)
-
-    # List resources.
-    try:
-        root_folders = client.list_root_folder()
-    except Exception as e:
-        module.fail_json('Error listing root folders: %s' % to_native(e.reason), **result)
-
     # Check if a resource is present already.
-    for root_folder in root_folders:
-        if root_folder['path'] == module.params['path']:
-            result.update(root_folder)
+    state = find_root_folder(module.params['path'], result)
+    if state:
+        result.update(state.dict(by_alias=False))
+
+    # Delete the resource if needed.
+    if module.params['state'] == 'absent':
+        delete_root_folder(result)
 
     # Create a new resource.
-    if module.params['state'] == 'present' and result['id'] == 0:
-        result['changed'] = True
-        # Only without check mode.
-        if not module.check_mode:
-            try:
-                response = client.create_root_folder(root_folder_resource={'path': module.params['path']})
-            except Exception as e:
-                module.fail_json('Error creating root folder: %s' % to_native(e.reason), **result)
-            result.update(response)
+    if result['id'] == 0:
+        create_root_folder({'path': module.params['path']}, result)
 
-    # Delete the resource.
-    elif module.params['state'] == 'absent' and result['id'] != 0:
-        result['changed'] = True
-        # Only without check mode.
-        if not module.check_mode:
-            try:
-                response = client.delete_root_folder(result['id'])
-            except Exception as e:
-                module.fail_json('Error deleting root folder: %s' % to_native(e.reason), **result)
-            result['id'] = 0
-
+    # No need for update
+    # Exit whith no changes.
     module.exit_json(**result)
 
 

@@ -1,0 +1,40 @@
+---
+- name: create import list exclusion
+  devopsarr.radarr.radarr_import_list_exclusion:
+    title: 'gladiator'
+    tmdb_id: 12345
+    year: 1990
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert import list exclusion creation
+  assert:
+    that:
+      - result['tmdb_id'] == 12345
+# ----------------------------------------------------------------------------
+- name: check idempotency
+  devopsarr.radarr.radarr_import_list_exclusion:
+    title: 'gladiator'
+    tmdb_id: 12345
+    year: 1990
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert import list exclusion idempotency
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: delete import list exclusion
+  devopsarr.radarr.radarr_import_list_exclusion:
+    title: 'gladiator'
+    tmdb_id: 12345
+    year: 1990
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert import list exclusion deletion
+  assert:
+    that:
+      - result['id'] == 0

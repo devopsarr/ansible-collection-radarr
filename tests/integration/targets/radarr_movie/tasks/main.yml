@@ -1,0 +1,66 @@
+---
+- name: create movie
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    monitored: false
+    path: "/config/the-matrix"
+    root_folder_path: "/config"
+    quality_profile_id: 1
+    minimum_availability: "announced"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert movie creation
+  assert:
+    that:
+      - result['tmdb_id'] == 603
+# ----------------------------------------------------------------------------
+- name: edit already present movie
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    monitored: true
+    path: "/config/the-matrix"
+    root_folder_path: "/config"
+    quality_profile_id: 1
+    minimum_availability: "announced"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert movie changes
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    monitored: true
+    path: "/config/the-matrix"
+    root_folder_path: "/config"
+    quality_profile_id: 1
+    minimum_availability: "announced"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert movie idempotency
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: delete movie
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    path: "/config/the-matrix"
+    minimum_availability: "announced"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+    state: 'absent'
+  register: result
+- name: assert movie deletion
+  assert:
+    that:
+      - result['id'] == 0

@@ -1,0 +1,23 @@
+---
+- name: list a single quality
+  devopsarr.radarr.radarr_quality_info:
+    name: "SDTV"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single quality
+  assert:
+    that:
+      - result['qualities'][0]['quality']['name'] == 'SDTV'
+# ----------------------------------------------------------------------------
+- name: list all qualitys
+  devopsarr.radarr.radarr_quality_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple qualitys
+  assert:
+    that:
+      - result['qualities'] | length > 1

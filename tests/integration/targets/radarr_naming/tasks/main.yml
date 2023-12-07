@@ -1,0 +1,35 @@
+---
+# ----------------------------------------------------------------------------
+- name: edit naming
+  devopsarr.radarr.radarr_naming:
+    rename_movies: true
+    replace_illegal_characters: true
+    colon_replacement_format: 'spaceDash'
+    movie_folder_format: '{Movie Title} ({Release Year})'
+    standard_movie_format: '{Movie Title} ({Release Year}) {Quality Full}'
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: test
+  ansible.builtin.debug:
+    msg: "{{result}}"
+- name: assert naming changes
+  assert:
+    that:
+      - result.colon_replacement_format == "spaceDash"
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_naming:
+    rename_movies: true
+    replace_illegal_characters: true
+    colon_replacement_format: 'spaceDash'
+    movie_folder_format: '{Movie Title} ({Release Year})'
+    standard_movie_format: '{Movie Title} ({Release Year}) {Quality Full}'
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert delay profile idempotency
+  assert:
+    that:
+      - result.changed == false
+      - result.colon_replacement_format == "spaceDash"
