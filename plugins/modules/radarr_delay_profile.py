@@ -19,7 +19,6 @@ description: Manages Radarr delay profile.
 options:
     preferred_protocol:
         description: Preferred protocol.
-        required: true
         choices: [ "torrent", "usenet" ]
         type: str
     usenet_delay:
@@ -28,6 +27,10 @@ options:
     torrent_delay:
         description: Torrent delay.
         type: int
+    minimum_custom_format_score:
+        description: Minimum cutoff format score.
+        type: int
+        default: 0
     order:
         description: Order.
         type: int
@@ -40,20 +43,18 @@ options:
     bypass_if_highest_quality:
         description: Bypass if highest quality flag.
         type: bool
+    bypass_if_above_custom_format_score:
+        description: Bypass if above custom format score flag.
+        type: bool
     tags:
         description: Tag list.
         required: true
         type: list
         elements: int
-    state:
-        description: Create or delete a delay profile.
-        required: false
-        default: 'present'
-        choices: [ "present", "absent" ]
-        type: str
 
 extends_documentation_fragment:
     - devopsarr.radarr.radarr_credentials
+    - devopsarr.radarr.radarr_state
 
 author:
     - Fuochi (@Fuochi)
@@ -63,19 +64,21 @@ EXAMPLES = r'''
 ---
 # Create a delay profile
 - name: Create a delay profile
-  devopsarr.radarr.delay_profile:
+  devopsarr.radarr.radarr_delay_profile:
     preferred_protocol: torrent
     usenet_delay: 0
     torrent_delay: 0
+    minimum_custom_format_score: 0
     order: 100
     enable_usenet: true
     enable_torrent: true
+    bypass_if_above_custom_format_score: true
     bypass_if_highest_quality: false
     tags: [1,2]
 
 # Delete a delay profile
 - name: Delete a delay_profile
-  devopsarr.radarr.delay_profile:
+  devopsarr.radarr.radarr_delay_profile:
     preferred_protocol: torrent
     tags: [1,2]
     state: absent
@@ -103,6 +106,11 @@ torrent_delay:
     returned: always
     type: int
     sample: 0
+minimum_custom_format_score:
+    description: Minimum cutoff format score.
+    type: int
+    returned: always
+    sample: 0
 order:
     description: Order.
     returned: always
@@ -120,6 +128,11 @@ enable_torrent:
     sample: true
 bypass_if_highest_quality:
     description: Bypass if highest quality flag.
+    returned: always
+    type: bool
+    sample: true
+bypass_if_above_custom_format_score:
+    description: Bypass if above custom format score flag.
     returned: always
     type: bool
     sample: true
@@ -141,88 +154,123 @@ except ImportError:
     HAS_RADARR_LIBRARY = False
 
 
-def run_module():
+def init_module_args():
     # define available arguments/parameters a user can pass to the module
-    module_args = dict(
-        preferred_protocol=dict(type='str', required=True, choices=['torrent', 'usenet']),
+    return dict(
+        preferred_protocol=dict(type='str', choices=['torrent', 'usenet']),
         usenet_delay=dict(type='int'),
         torrent_delay=dict(type='int'),
+        minimum_custom_format_score=dict(type='int', default=0),
         order=dict(type='int'),
         enable_usenet=dict(type='bool'),
         enable_torrent=dict(type='bool'),
         bypass_if_highest_quality=dict(type='bool'),
+        bypass_if_above_custom_format_score=dict(type='bool'),
         tags=dict(type='list', elements='int', required=True),
         state=dict(default='present', type='str', choices=['present', 'absent']),
     )
 
+
+def create_delay_profile(want, result):
+    result['changed'] = True
+    # Only without check mode.
+    if not module.check_mode:
+        try:
+            response = client.create_delay_profile(delay_profile_resource=want)
+        except Exception as e:
+            module.fail_json('Error creating delay profile: %s' % to_native(e.reason), **result)
+        result.update(response.dict(by_alias=False))
+    module.exit_json(**result)
+
+
+def list_delay_profiles(result):
+    try:
+        return client.list_delay_profile()
+    except Exception as e:
+        module.fail_json('Error listing delay profiles: %s' % to_native(e.reason), **result)
+
+
+def find_delay_profile(tags, result):
+    for profile in list_delay_profiles(result):
+        if profile['tags'] == tags:
+            return profile
+    return None
+
+
+def update_delay_profile(want, result):
+    result['changed'] = True
+    # Only without check mode.
+    if not module.check_mode:
+        try:
+            response = client.update_delay_profile(delay_profile_resource=want, id=str(want.id))
+        except Exception as e:
+            module.fail_json('Error updating delay profile: %s' % to_native(e.reason), **result)
+    # No need to exit module since it will exit by default either way
+    result.update(response.dict(by_alias=False))
+
+
+def delete_delay_profile(result):
+    if result['id'] != 0:
+        result['changed'] = True
+        if not module.check_mode:
+            try:
+                client.delete_delay_profile(result['id'])
+            except Exception as e:
+                module.fail_json('Error deleting delay profile: %s' % to_native(e.reason), **result)
+            result['id'] = 0
+    module.exit_json(**result)
+
+
+def run_module():
+    global client
+    global module
+
+    # Define available arguments/parameters a user can pass to the module
+    module = RadarrModule(
+        argument_spec=init_module_args(),
+        supports_check_mode=True,
+    )
+
+    # Init client and result.
+    client = radarr.DelayProfileApi(module.api)
     result = dict(
         changed=False,
         id=0,
     )
 
-    module = RadarrModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    client = radarr.DelayProfileApi(module.api)
-
-    # List resources.
-    try:
-        delay_profiles = client.list_delay_profile()
-    except Exception as e:
-        module.fail_json('Error listing dellay profiles: %s' % to_native(e.reason), **result)
-
     # Check if a resource is present already.
-    for profile in delay_profiles:
-        if profile['tags'] == module.params['tags']:
-            result.update(profile)
-            state = profile
+    state = find_delay_profile(module.params['tags'], result)
+    if state:
+        result.update(state.dict(by_alias=False))
 
+    # Delete the resource if needed.
+    if module.params['state'] == 'absent':
+        delete_delay_profile(result)
+
+    # Set wanted resource.
     want = radarr.DelayProfileResource(**{
         'enable_usenet': module.params['enable_usenet'],
         'enable_torrent': module.params['enable_torrent'],
         'preferred_protocol': module.params['preferred_protocol'],
         'usenet_delay': module.params['usenet_delay'],
         'torrent_delay': module.params['torrent_delay'],
+        'minimum_custom_format_score': module.params['minimum_custom_format_score'],
         'bypass_if_highest_quality': module.params['bypass_if_highest_quality'],
+        'bypass_if_above_custom_format_score': module.params['bypass_if_above_custom_format_score'],
         'order': module.params['order'],
         'tags': module.params['tags'],
     })
 
-    # Create a new resource.
-    if module.params['state'] == 'present' and result['id'] == 0:
-        result['changed'] = True
-        # Only without check mode.
-        if not module.check_mode:
-            try:
-                response = client.create_delay_profile(delay_profile_resource=want)
-            except Exception as e:
-                module.fail_json('Error creating delay profile: %s' % to_native(e.reason), **result)
-            result.update(response)
+    # Create a new resource if needed.
+    if result['id'] == 0:
+        create_delay_profile(want, result)
 
     # Update an existing resource.
-    elif module.params['state'] == 'present':
-        want.id = result['id']
-        if want != state:
-            result['changed'] = True
-            if not module.check_mode:
-                try:
-                    response = client.update_delay_profile(delay_profile_resource=want, id=str(want.id))
-                except Exception as e:
-                    module.fail_json('Error updating delay profile: %s' % to_native(e.reason), **result)
-            result.update(response)
+    want.id = result['id']
+    if want != state:
+        update_delay_profile(want, result)
 
-    # Delete the resource.
-    elif module.params['state'] == 'absent' and result['id'] != 0:
-        result['changed'] = True
-        if not module.check_mode:
-            try:
-                response = client.delete_delay_profile(result['id'])
-            except Exception as e:
-                module.fail_json('Error deleting delay profile: %s' % to_native(e.reason), **result)
-            result['id'] = 0
-
+    # Exit whith no changes.
     module.exit_json(**result)
 
 
