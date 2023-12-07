@@ -1,0 +1,63 @@
+---
+- name: create first movie
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    monitored: false
+    path: "/config/the-matrix"
+    root_folder_path: "/config"
+    quality_profile_id: 1
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+
+- name: create second movie
+  devopsarr.radarr.radarr_movie:
+    title: "Gladiator"
+    tmdb_id: 98
+    monitored: false
+    path: "/config/gladiator"
+    root_folder_path: "/config"
+    quality_profile_id: 1
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+
+- name: list a single movie
+  devopsarr.radarr.radarr_movie_info:
+    tmdb_id: 603
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single movie
+  assert:
+    that:
+      - result['movie_list'][0]['title'] == 'The Matrix'
+# ----------------------------------------------------------------------------
+- name: list all movie_list
+  devopsarr.radarr.radarr_movie_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple movie_list
+  assert:
+    that:
+      - result['movie_list'] | length > 1
+# ----------------------------------------------------------------------------
+- name: clean up first movie
+  devopsarr.radarr.radarr_movie:
+    title: "The Matrix"
+    tmdb_id: 603
+    path: "/config/the-matrix"
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+
+- name: clean up second movie
+  devopsarr.radarr.radarr_movie:
+    title: "Gladiator"
+    tmdb_id: 98
+    path: "/config/gladiator"
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"

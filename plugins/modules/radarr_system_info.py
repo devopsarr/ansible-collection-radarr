@@ -23,7 +23,7 @@ author:
 
 EXAMPLES = r'''
 # It will fetch the system info
-- name: Test with a message
+- name: Get system info
   devopsarr.radarr.radarr_system_info:
 '''
 
@@ -169,7 +169,6 @@ package_update_mechanism:
 from ansible_collections.devopsarr.radarr.plugins.module_utils.radarr_module import RadarrModule
 from ansible.module_utils.common.text.converters import to_native
 
-
 try:
     import radarr
     HAS_RADARR_LIBRARY = True
@@ -179,26 +178,32 @@ except ImportError:
 __metaclass__ = type
 
 
+def get_system_status(result):
+    try:
+        return client.get_system_status()
+    except Exception as e:
+        module.fail_json('Error retrieving system status: %s' % to_native(e.reason), **result)
+
+
 def run_module():
+    global client
+    global module
+
+    # Define available arguments/parameters a user can pass to the module
+    module = RadarrModule(
+        argument_spec={},
+        supports_check_mode=True,
+    )
+    # Init client and result.
+    client = radarr.SystemApi(module.api)
     result = dict(
         changed=False,
     )
 
-    module = RadarrModule(
-        argument_spec={},
-        supports_check_mode=True
-    )
+    # Get resources.
+    result.update(get_system_status(result).dict(by_alias=False))
 
-    client = radarr.SystemApi(module.api)
-
-    # Get the system status.
-    try:
-        response = client.get_system_status()
-    except Exception as e:
-        module.fail_json('Error retrieving system status: %s' % to_native(e.reason), **result)
-
-    result.update(response)
-
+    # Exit with data.
     module.exit_json(**result)
 
 
