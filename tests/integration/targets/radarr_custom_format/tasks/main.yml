@@ -1,0 +1,126 @@
+---
+- name: create custom format
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Language"
+    specifications:
+    - name: "arabic"
+      implementation: "LanguageSpecification"
+      negate: false
+      required: true
+      fields:
+      - name: "value"
+        value: 26
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert custom format creation
+  assert:
+    that:
+      - result['name'] == 'Language'
+# ----------------------------------------------------------------------------
+- name: edit already present custom format
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Language"
+    specifications:
+    - name: "arabic"
+      implementation: "LanguageSpecification"
+      negate: false
+      required: true
+      fields:
+      - name: "value"
+        value: 25
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert custom format changes
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: edit already present custom format
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Language"
+    specifications:
+      - name: MULTi
+        implementation: ReleaseTitleSpecification
+        negate: false
+        required: false
+        fields:
+          - name: value
+            value: \b(MULTi(?![ .-]subs?))(\d|\b)
+      - name: VO and VF
+        implementation: ReleaseTitleSpecification
+        negate: false
+        required: false
+        fields:
+          - name: value
+            value: ^(?=.*\b(VO(ST(FR)?)?)\b)(?=.*\b(VF[FIQ2]?)\b)
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert custom format changes
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Language"
+    specifications:
+      - name: MULTi
+        implementation: ReleaseTitleSpecification
+        negate: false
+        required: false
+        fields:
+          - name: value
+            value: \b(MULTi(?![ .-]subs?))(\d|\b)
+      - name: VO and VF
+        implementation: ReleaseTitleSpecification
+        negate: false
+        required: false
+        fields:
+          - name: value
+            value: ^(?=.*\b(VO(ST(FR)?)?)\b)(?=.*\b(VF[FIQ2]?)\b)
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert custom format idempotency
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: test reduction
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Language"
+    specifications:
+      - name: MULTi
+        implementation: ReleaseTitleSpecification
+        negate: false
+        required: false
+        fields:
+          - name: value
+            value: \b(MULTi(?![ .-]subs?))(\d|\b)
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert custom format idempotency
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: delete custom format
+  devopsarr.radarr.radarr_custom_format:
+    name: "Language"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+    state: 'absent'
+  register: result
+- name: assert custom format deletion
+  assert:
+    that:
+      - result['id'] == 0
