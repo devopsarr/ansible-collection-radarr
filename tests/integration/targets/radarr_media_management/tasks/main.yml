@@ -1,0 +1,63 @@
+---
+# ----------------------------------------------------------------------------
+- name: edit media management
+  devopsarr.radarr.radarr_media_management:
+    chmod_folder: "755"
+    rescan_after_refresh: "always"
+    recycle_bin: ""
+    file_date: "cinemas"
+    extra_file_extensions: "srt,info"
+    download_propers_and_repacks: "doNotPrefer"
+    chown_group: "arrs"
+    minimum_free_space_when_importing: 100
+    recycle_bin_cleanup_days: 7
+    auto_unmonitor_previously_downloaded_movies: true
+    skip_free_space_check_when_importing: true
+    set_permissions_linux: true
+    import_extra_files: true
+    enable_media_info: true
+    delete_empty_folders: true
+    create_empty_movie_folders: true
+    copy_using_hardlinks: true
+    paths_default_static: false
+    auto_rename_folders: true
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: test
+  ansible.builtin.debug:
+    msg: "{{result}}"
+- name: assert media management changes
+  assert:
+    that:
+      - result.chmod_folder == "755"
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_media_management:
+    chmod_folder: "755"
+    rescan_after_refresh: "always"
+    recycle_bin: ""
+    file_date: "cinemas"
+    extra_file_extensions: "srt,info"
+    download_propers_and_repacks: "doNotPrefer"
+    chown_group: "arrs"
+    minimum_free_space_when_importing: 100
+    recycle_bin_cleanup_days: 7
+    auto_unmonitor_previously_downloaded_movies: true
+    skip_free_space_check_when_importing: true
+    set_permissions_linux: true
+    import_extra_files: true
+    enable_media_info: true
+    delete_empty_folders: true
+    create_empty_movie_folders: true
+    copy_using_hardlinks: true
+    paths_default_static: false
+    auto_rename_folders: true
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert media management idempotency
+  assert:
+    that:
+      - result.changed == false
+      - result.chown_group == "arrs"
