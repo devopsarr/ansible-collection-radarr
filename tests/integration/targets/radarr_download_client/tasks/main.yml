@@ -1,0 +1,183 @@
+---
+- name: create download client
+  devopsarr.radarr.radarr_download_client:
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    name: "Hadouken"
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password"
+    - name: "useSsl"
+      value: false
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert download client creation
+  assert:
+    that:
+      - result['implementation'] == 'Hadouken'
+# ----------------------------------------------------------------------------
+- name: edit already present download client
+  devopsarr.radarr.radarr_download_client:
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    name: "Hadouken"
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password"
+    - name: "useSsl"
+      value: true
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert download client changes
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_download_client:
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    name: "Hadouken"
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password"
+    - name: "useSsl"
+      value: true
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert download client idempotency
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: test sensitive un-change
+  devopsarr.radarr.radarr_download_client:
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    name: "Hadouken"
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password123"
+    - name: "useSsl"
+      value: true
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert download client idempotency
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: test key change
+  devopsarr.radarr.radarr_download_client:
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    name: "Hadouken"
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password123"
+    - name: "useSsl"
+      value: true
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    update_secrets: true
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert download client idempotency
+  assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: delete download client
+  devopsarr.radarr.radarr_download_client:
+    name: "Hadouken"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+    state: 'absent'
+  register: result
+- name: assert download client deletion
+  assert:
+    that:
+      - result['id'] == 0

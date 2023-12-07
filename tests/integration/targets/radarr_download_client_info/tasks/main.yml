@@ -1,0 +1,65 @@
+---
+- name: create download client
+  devopsarr.radarr.radarr_download_client:
+    name: "{{ item }}"
+    remove_completed_downloads: false
+    remove_failed_downloads: false
+    enable: false
+    priority: 1
+    fields:
+    - name: "host"
+      value: "hadouken.lcl"
+    - name: "urlBase"
+      value: "/hadouken/"
+    - name: "port"
+      value: 9091
+    - name: "category"
+      value: "radarr-tv"
+    - name: "username"
+      value: "username"
+    - name: "password"
+      value: "password"
+    - name: "useSsl"
+      value: false
+    protocol: "torrent"
+    config_contract: "HadoukenSettings"
+    implementation: "Hadouken"
+    tags: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - 'info_test'
+    - 'info_test1'
+
+- name: list a single download client
+  devopsarr.radarr.radarr_download_client_info:
+    name: "info_test"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single download client
+  assert:
+    that:
+      - result['download_clients'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: list all download clients
+  devopsarr.radarr.radarr_download_client_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple download clients
+  assert:
+    that:
+      - result['download_clients'] | length > 1
+# ----------------------------------------------------------------------------
+- name: clean up download client
+  devopsarr.radarr.radarr_download_client:
+    name: "{{ item }}"
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - 'info_test'
+    - 'info_test1'
