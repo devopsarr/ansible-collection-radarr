@@ -21,29 +21,25 @@ options:
         description: Actual tag.
         required: true
         type: str
-    state:
-        description: Create or delete a tag.
-        required: false
-        default: 'present'
-        choices: [ "present", "absent" ]
-        type: str
 
 extends_documentation_fragment:
     - devopsarr.radarr.radarr_credentials
+    - devopsarr.radarr.radarr_state
 
 author:
     - Fuochi (@Fuochi)
 '''
 
 EXAMPLES = r'''
+---
 # Create a tag
 - name: Create a tag
-  devopsarr.radarr.tag:
+  devopsarr.radarr.radarr_tag:
     label: default
 
 # Delete a tag
 - name: Delete a tag
-  devopsarr.radarr.tag:
+  devopsarr.radarr.radarr_tag:
     label: wrong
     state: absent
 '''
@@ -72,61 +68,83 @@ except ImportError:
     HAS_RADARR_LIBRARY = False
 
 
-def run_module():
+def init_module_args():
     # define available arguments/parameters a user can pass to the module
-    module_args = dict(
-        # TODO: add validation for lowercase tags
+    return dict(
         label=dict(type='str', required=True),
         state=dict(default='present', type='str', choices=['present', 'absent']),
     )
 
+
+def create_tag(want, result):
+    result['changed'] = True
+    # Only without check mode.
+    if not module.check_mode:
+        try:
+            response = client.create_tag(tag_resource=want)
+        except Exception as e:
+            module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
+        result.update(response.dict(by_alias=False))
+    module.exit_json(**result)
+
+
+def list_tags(result):
+    try:
+        return client.list_tag()
+    except Exception as e:
+        module.fail_json('Error listing tags: %s' % to_native(e.reason), **result)
+
+
+def find_tag(label, result):
+    for tag in list_tags(result):
+        if tag['label'] == label:
+            return tag
+    return None
+
+
+def delete_tag(result):
+    if result['id'] != 0:
+        result['changed'] = True
+        if not module.check_mode:
+            try:
+                client.delete_tag(result['id'])
+            except Exception as e:
+                module.fail_json('Error deleting tag: %s' % to_native(e.reason), **result)
+            result['id'] = 0
+    module.exit_json(**result)
+
+
+def run_module():
+    global client
+    global module
+
+    # Define available arguments/parameters a user can pass to the module
+    module = RadarrModule(
+        argument_spec=init_module_args(),
+        supports_check_mode=True,
+    )
+    # Init client and result.
+    client = radarr.TagApi(module.api)
     result = dict(
         changed=False,
         id=0,
     )
 
-    module = RadarrModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    client = radarr.TagApi(module.api)
-
-    # List resources.
-    try:
-        tags = client.list_tag()
-    except Exception as e:
-        module.fail_json('Error listing tags: %s' % to_native(e.reason), **result)
-
     # Check if a resource is present already.
-    for tag in tags:
-        if tag['label'] == module.params['label']:
-            result.update(tag)
+    state = find_tag(module.params['label'], result)
+    if state:
+        result.update(state.dict(by_alias=False))
+
+    # Delete the resource if needed.
+    if module.params['state'] == 'absent':
+        delete_tag(result)
 
     # Create a new resource.
-    if module.params['state'] == 'present' and result['id'] == 0:
-        result['changed'] = True
-        # Only without check mode.
-        if not module.check_mode:
-            try:
-                response = client.create_tag(tag_resource={
-                    'label': module.params['label'],
-                })
-            except Exception as e:
-                module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
-            result.update(response)
+    if result['id'] == 0:
+        create_tag({'label': module.params['label']}, result)
 
-    # Delete the resource.
-    elif module.params['state'] == 'absent' and result['id'] != 0:
-        result['changed'] = True
-        # Only without check mode.
-        if not module.check_mode:
-            try:
-                response = client.delete_tag(result['id'])
-            except Exception as e:
-                module.fail_json('Error deleting tag: %s' % to_native(e.reason), **result)
-            result['id'] = 0
-
+    # No need for update
+    # Exit whith no changes.
     module.exit_json(**result)
 
 
