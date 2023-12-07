@@ -1,0 +1,41 @@
+---
+# ----------------------------------------------------------------------------
+- name: edit indexer_config
+  devopsarr.radarr.radarr_indexer_config:
+    prefer_indexer_flags: false
+    allow_hardcoded_subs: false
+    maximum_size: 0
+    minimum_age: 0
+    retention: 0
+    rss_sync_interval: 70
+    availability_delay: 0
+    whitelisted_hardcoded_subs: ""
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: test
+  ansible.builtin.debug:
+    msg: "{{result}}"
+- name: assert indexer_config changes
+  assert:
+    that:
+      - result.rss_sync_interval == 70
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_indexer_config:
+    prefer_indexer_flags: false
+    allow_hardcoded_subs: false
+    maximum_size: 0
+    minimum_age: 0
+    retention: 0
+    rss_sync_interval: 70
+    availability_delay: 0
+    whitelisted_hardcoded_subs: ""
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert delay profile idempotency
+  assert:
+    that:
+      - result.changed == false
+      - result.rss_sync_interval == 70
