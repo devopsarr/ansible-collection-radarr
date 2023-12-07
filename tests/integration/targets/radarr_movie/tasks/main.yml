@@ -5,7 +5,7 @@
     tmdb_id: 603
     monitored: false
     path: "/config/the-matrix"
-    root_folder_path: "/config/"
+    root_folder_path: "/config"
     quality_profile_id: 1
     minimum_availability: "announced"
     radarr_api_key: "{{ radarr_api_key }}"
@@ -22,7 +22,7 @@
     tmdb_id: 603
     monitored: true
     path: "/config/the-matrix"
-    root_folder_path: "/config/"
+    root_folder_path: "/config"
     quality_profile_id: 1
     minimum_availability: "announced"
     radarr_api_key: "{{ radarr_api_key }}"
@@ -39,7 +39,7 @@
     tmdb_id: 603
     monitored: true
     path: "/config/the-matrix"
-    root_folder_path: "/config/"
+    root_folder_path: "/config"
     quality_profile_id: 1
     minimum_availability: "announced"
     radarr_api_key: "{{ radarr_api_key }}"
