@@ -1,0 +1,42 @@
+---
+- name: create root folder
+  devopsarr.radarr.radarr_root_folder:
+    path: "{{ item }}"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - '/tmp'
+    - '/config'
+
+- name: list a single root folder
+  devopsarr.radarr.radarr_root_folder_info:
+    path: "/tmp"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert single root folder
+  assert:
+    that:
+      - result['root_folders'][0]['path'] == '/tmp'
+# ----------------------------------------------------------------------------
+- name: list all root folders
+  devopsarr.radarr.radarr_root_folder_info:
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+
+- name: assert multiple root folders
+  assert:
+    that:
+      - result['root_folders'] | length > 1
+# ----------------------------------------------------------------------------
+- name: clean up root folder
+  devopsarr.radarr.radarr_root_folder:
+    path: "/tmp"
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  with_items:
+    - '/tmp'
+    - '/config'
