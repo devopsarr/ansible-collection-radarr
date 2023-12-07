@@ -1,1 +1,137 @@
-releases: {}
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+    - description: Manages Radarr auto tag.
+      name: radarr_auto_tag
+      namespace: ''
+    - description: Get information about Radarr auto tag.
+      name: radarr_auto_tag_info
+      namespace: ''
+    - description: Get information about Radarr auto tag schema.
+      name: radarr_auto_tag_schema_info
+      namespace: ''
+    - description: Manages Radarr custom format.
+      name: radarr_custom_format
+      namespace: ''
+    - description: Get information about Radarr custom format.
+      name: radarr_custom_format_info
+      namespace: ''
+    - description: Get information about Radarr custom format schema.
+      name: radarr_custom_format_schema_info
+      namespace: ''
+    - description: Get information about Radarr delay profile.
+      name: radarr_delay_profile_info
+      namespace: ''
+    - description: Manages Radarr download client.
+      name: radarr_download_client
+      namespace: ''
+    - description: Manages Radarr download client config.
+      name: radarr_download_client_config
+      namespace: ''
+    - description: Get information about Radarr download client config.
+      name: radarr_download_client_config_info
+      namespace: ''
+    - description: Get information about Radarr download client.
+      name: radarr_download_client_info
+      namespace: ''
+    - description: Get information about Radarr download client schema.
+      name: radarr_download_client_schema_info
+      namespace: ''
+    - description: Manages Radarr import list.
+      name: radarr_import_list
+      namespace: ''
+    - description: Manages Radarr import list exclusion.
+      name: radarr_import_list_exclusion
+      namespace: ''
+    - description: Manages Radarr import list exclusion.
+      name: radarr_import_list_exclusion_info
+      namespace: ''
+    - description: Get information about Radarr import list.
+      name: radarr_import_list_info
+      namespace: ''
+    - description: Get information about Radarr import list schema.
+      name: radarr_import_list_schema_info
+      namespace: ''
+    - description: Manages Radarr indexer.
+      name: radarr_indexer
+      namespace: ''
+    - description: Manages Radarr indexer config.
+      name: radarr_indexer_config
+      namespace: ''
+    - description: Get information about Radarr indexer config.
+      name: radarr_indexer_config_info
+      namespace: ''
+    - description: Get information about Radarr indexer.
+      name: radarr_indexer_info
+      namespace: ''
+    - description: Get information about Radarr indexer schema.
+      name: radarr_indexer_schema_info
+      namespace: ''
+    - description: Get information about Radarr language.
+      name: radarr_language_info
+      namespace: ''
+    - description: Manages Radarr media management.
+      name: radarr_media_management
+      namespace: ''
+    - description: Get information about Radarr media management.
+      name: radarr_media_management_info
+      namespace: ''
+    - description: Manages Radarr metadata.
+      name: radarr_metadata
+      namespace: ''
+    - description: Get information about Radarr metadata.
+      name: radarr_metadata_info
+      namespace: ''
+    - description: Get information about Radarr metadata schema.
+      name: radarr_metadata_schema_info
+      namespace: ''
+    - description: Manages Radarr movie.
+      name: radarr_movie
+      namespace: ''
+    - description: Get information about Radarr movie.
+      name: radarr_movie_info
+      namespace: ''
+    - description: Manages Radarr naming.
+      name: radarr_naming
+      namespace: ''
+    - description: Get information about Radarr naming.
+      name: radarr_naming_info
+      namespace: ''
+    - description: Manages Radarr notification.
+      name: radarr_notification
+      namespace: ''
+    - description: Get information about Radarr notification.
+      name: radarr_notification_info
+      namespace: ''
+    - description: Get information about Radarr notification schema.
+      name: radarr_notification_schema_info
+      namespace: ''
+    - description: Manages Radarr quality.
+      name: radarr_quality
+      namespace: ''
+    - description: Get information about Radarr quality.
+      name: radarr_quality_info
+      namespace: ''
+    - description: Manages Radarr quality profile.
+      name: radarr_quality_profile
+      namespace: ''
+    - description: Get information about Radarr quality profile.
+      name: radarr_quality_profile_info
+      namespace: ''
+    - description: Manages Radarr release profile.
+      name: radarr_release_profile
+      namespace: ''
+    - description: Get information about Radarr release profile.
+      name: radarr_release_profile_info
+      namespace: ''
+    - description: Get information about Radarr remote path mapping.
+      name: radarr_remote_path_mapping_info
+      namespace: ''
+    - description: Get information about Radarr root folder.
+      name: radarr_root_folder_info
+      namespace: ''
+    - description: Get information about Radarr tag.
+      name: radarr_tag_info
+      namespace: ''
+    release_date: '2023-12-07'
