@@ -1,0 +1,159 @@
+---
+- name: create example custom format
+  devopsarr.radarr.radarr_custom_format:
+    include_custom_format_when_renaming: false
+    name: "Arab"
+    specifications:
+    - name: "arabic"
+      implementation: "LanguageSpecification"
+      negate: false
+      required: true
+      fields:
+      - name: "value"
+        value: 31
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: format
+- name: create quality profile
+  devopsarr.radarr.radarr_quality_profile:
+    name: "Example"
+    upgrade_allowed: true
+    cutoff: 1
+    min_format_score: 0
+    cutoff_format_score: 0
+    language:
+      name: Arabic
+      id: 31
+    quality_groups:
+      - qualities:
+        - id: 1
+          name: "SDTV"
+          source: "tv"
+          resolution: 480
+      - name: "WEB 720p"
+        id: 1001
+        qualities:
+        - id: 14
+          name: "WEBRip-720p"
+          source: "webrip"
+          resolution: 720
+        - id: 5
+          name: "WEBDL-720p"
+          source: "webdl"
+          resolution: 720
+    formats: []
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert quality profile creation
+  assert:
+    that:
+      - result['cutoff'] == 1
+# ----------------------------------------------------------------------------
+- name: edit already present quality profile
+  devopsarr.radarr.radarr_quality_profile:
+    name: "Example"
+    upgrade_allowed: false
+    cutoff: 1
+    min_format_score: 0
+    cutoff_format_score: 0
+    language:
+      name: Arabic
+      id: 31
+    quality_groups:
+      - qualities:
+        - id: 30
+          name: "Remux-1080p"
+          source: "bluray"
+          resolution: 1080
+      - qualities:
+        - id: 1
+          name: "SDTV"
+          source: "tv"
+          resolution: 480
+      - name: "WEB 720p"
+        id: 1001
+        qualities:
+        - id: 14
+          name: "WEBRip-720p"
+          source: "webrip"
+          resolution: 720
+        - id: 5
+          name: "WEBDL-720p"
+          source: "webdl"
+          resolution: 720
+    formats:
+      - name: "{{ format['name'] }}"
+        id: "{{ format['id'] }}"
+        score: 100
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert quality profile changes
+  assert:
+    that:
+      - result.changed == true
+      - result.upgrade_allowed == false
+# ----------------------------------------------------------------------------
+- name: test idempotency
+  devopsarr.radarr.radarr_quality_profile:
+    name: "Example"
+    upgrade_allowed: false
+    cutoff: 1
+    min_format_score: 0
+    cutoff_format_score: 0
+    language:
+      name: Arabic
+      id: 31
+    quality_groups:
+      - qualities:
+        - id: 30
+          name: "Remux-1080p"
+          source: "bluray"
+          resolution: 1080
+      - qualities:
+        - id: 1
+          name: "SDTV"
+          source: "tv"
+          resolution: 480
+      - name: "WEB 720p"
+        id: 1001
+        qualities:
+        - id: 14
+          name: "WEBRip-720p"
+          source: "webrip"
+          resolution: 720
+        - id: 5
+          name: "WEBDL-720p"
+          source: "webdl"
+          resolution: 720
+    formats:
+      - name: "{{ format['name'] }}"
+        id: "{{ format['id'] }}"
+        score: 100
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: assert quality profile idempotency
+  assert:
+    that:
+      - result.changed == false
+      - result.upgrade_allowed == false
+# ----------------------------------------------------------------------------
+- name: delete quality profile
+  devopsarr.radarr.radarr_quality_profile:
+    name: "Example"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+    state: 'absent'
+  register: result
+- name: assert quality profile deletion
+  assert:
+    that:
+      - result['id'] == 0
+- name: clean up custom format
+  devopsarr.radarr.radarr_custom_format:
+    name: "Arab"
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+    state: 'absent'
