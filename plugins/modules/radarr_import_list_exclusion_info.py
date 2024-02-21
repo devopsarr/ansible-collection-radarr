@@ -99,7 +99,7 @@ def populate_import_list_exclusions(result):
     # Check if a resource is present already.
     for import_list_exclusion in list_import_list_exclusion(result):
         if module.params['tmdb_id']:
-            if import_list_exclusion['tmdb_id'] == module.params['tmdb_id']:
+            if import_list_exclusion.tmdb_id == module.params['tmdb_id']:
                 exclusions = [import_list_exclusion.model_dump(by_alias=False)]
         else:
             exclusions.append(import_list_exclusion.model_dump(by_alias=False))
