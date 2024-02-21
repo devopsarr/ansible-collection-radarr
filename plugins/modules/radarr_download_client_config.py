@@ -21,6 +21,10 @@ options:
         description: Auto redownload failed.
         required: true
         type: bool
+    auto_redownload_failed_from_interactive_search:
+        description: Auto redownload failed from interactive search.
+        required: true
+        type: bool
     enable_completed_download_handling:
         description: Enable completed download handling.
         required: true
@@ -43,6 +47,7 @@ EXAMPLES = r'''
 - name: Update download client config
   devopsarr.radarr.radarr_download_client_config:
     auto_redownload_failed: false
+    auto_redownload_failed_from_interactive_search: false
     enable_completed_download_handling: true
 '''
 
@@ -54,12 +59,17 @@ id:
     returned: always
     sample: '1'
 auto_redownload_failed:
-    description: Maximum size.
+    description: Auto redownload failed.
+    returned: always
+    type: bool
+    sample: true
+auto_redownload_failed_from_interactive_search:
+    description: Auto redownload failed from interactive search.
     returned: always
     type: bool
     sample: true
 enable_completed_download_handling:
-    description: Minimum age.
+    description: Enable completed download handling.
     returned: always
     type: bool
     sample: true
@@ -69,7 +79,7 @@ check_for_finished_download_interval:
     type: int
     sample: 1
 download_client_working_folders:
-    description: Retention.
+    description: Download client working folders.
     returned: always
     type: str
     sample: '_UNPACK_|_FAILED_'
@@ -90,6 +100,7 @@ def init_module_args():
     return dict(
         enable_completed_download_handling=dict(type='bool', required=True),
         auto_redownload_failed=dict(type='bool', required=True),
+        auto_redownload_failed_from_interactive_search=dict(type='bool', required=True),
         check_for_finished_download_interval=dict(type='int', required=True),
     )
 
@@ -110,7 +121,7 @@ def update_download_client_config(want, result):
         except Exception as e:
             module.fail_json('Error updating download client config: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def run_module():
@@ -133,15 +144,16 @@ def run_module():
     # Get resource.
     state = read_download_client_config(result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
-    want = radarr.DownloadClientConfigResource(**{
-        'enable_completed_download_handling': module.params['enable_completed_download_handling'],
-        'auto_redownload_failed': module.params['auto_redownload_failed'],
-        'check_for_finished_download_interval': module.params['check_for_finished_download_interval'],
-        'download_client_working_folders': '_UNPACK_|_FAILED_',
-        'id': 1,
-    })
+    want = radarr.DownloadClientConfigResource(
+        enable_completed_download_handling=module.params['enable_completed_download_handling'],
+        auto_redownload_failed=module.params['auto_redownload_failed'],
+        auto_redownload_failed_from_interactive_search=module.params['auto_redownload_failed'],
+        check_for_finished_download_interval=module.params['check_for_finished_download_interval'],
+        download_client_working_folders='_UNPACK_|_FAILED_',
+        id=1,
+    )
 
     # Update an existing resource.
     if want != state:

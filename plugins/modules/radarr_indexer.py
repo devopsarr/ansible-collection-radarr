@@ -209,7 +209,7 @@ def create_indexer(want, result):
         except Exception as e:
             module.fail_json('Error creating indexer: %s' % to_native(e.body), **result)
             module.fail_json('Error creating indexer: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -222,7 +222,7 @@ def list_indexers(result):
 
 def find_indexer(name, result):
     for indexer in list_indexers(result):
-        if indexer['name'] == name:
+        if indexer.name == name:
             return indexer
     return None
 
@@ -236,7 +236,7 @@ def update_indexer(want, result):
         except Exception as e:
             module.fail_json('Error updating indexer: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_indexer(result):
@@ -275,26 +275,26 @@ def run_module():
     # Check if a resource is present already.
     state = find_indexer(module.params['name'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_indexer(result)
 
     # Set wanted resource.
-    want = radarr.IndexerResource(**{
-        'name': module.params['name'],
-        'enable_automatic_search': module.params['enable_automatic_search'],
-        'enable_interactive_search': module.params['enable_interactive_search'],
-        'enable_rss': module.params['enable_rss'],
-        'priority': module.params['priority'],
-        'download_client_id': module.params['download_client_id'],
-        'config_contract': module.params['config_contract'],
-        'implementation': module.params['implementation'],
-        'protocol': module.params['protocol'],
-        'tags': module.params['tags'],
-        'fields': field_helper.populate_fields(module.params['fields']),
-    })
+    want = radarr.IndexerResource(
+        name=module.params['name'],
+        enable_automatic_search=module.params['enable_automatic_search'],
+        enable_interactive_search=module.params['enable_interactive_search'],
+        enable_rss=module.params['enable_rss'],
+        priority=module.params['priority'],
+        download_client_id=module.params['download_client_id'],
+        config_contract=module.params['config_contract'],
+        implementation=module.params['implementation'],
+        protocol=module.params['protocol'],
+        tags=module.params['tags'],
+        fields=field_helper.populate_fields(module.params['fields']),
+    )
 
     # Create a new resource, if needed.
     if result['id'] == 0:

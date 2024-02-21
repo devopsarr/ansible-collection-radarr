@@ -94,7 +94,7 @@ def create_root_folder(want, result):
             response = client.create_root_folder(root_folder_resource=want)
         except Exception as e:
             module.fail_json('Error creating root folder: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -107,7 +107,7 @@ def list_root_folders(result):
 
 def find_root_folder(path, result):
     for folder in list_root_folders(result):
-        if folder['path'] == path:
+        if folder.path == path:
             return folder
     return None
 
@@ -144,7 +144,7 @@ def run_module():
     # Check if a resource is present already.
     state = find_root_folder(module.params['path'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':

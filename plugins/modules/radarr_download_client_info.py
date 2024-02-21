@@ -134,10 +134,10 @@ def populate_download_clients(result):
     # Check if a resource is present already.
     for download_client in list_download_clients(result):
         if module.params['name']:
-            if download_client['name'] == module.params['name']:
-                download_clients = [download_client.dict(by_alias=False)]
+            if download_client.name == module.params['name']:
+                download_clients = [download_client.model_dump(by_alias=False)]
         else:
-            download_clients.append(download_client.dict(by_alias=False))
+            download_clients.append(download_client.model_dump(by_alias=False))
     return download_clients
 
 

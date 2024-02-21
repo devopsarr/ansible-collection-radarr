@@ -97,7 +97,7 @@ def run_module():
     )
 
     # Get resource.
-    result.update(get_naming_config(result).dict(by_alias=False))
+    result.update(get_naming_config(result).model_dump(by_alias=False))
 
     # Exit with data.
     module.exit_json(**result)

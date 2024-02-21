@@ -205,7 +205,7 @@ def create_download_client(want, result):
             response = client.create_download_client(download_client_resource=want)
         except Exception as e:
             module.fail_json('Error creating download client: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -218,7 +218,7 @@ def list_download_clients(result):
 
 def find_download_client(name, result):
     for download_client in list_download_clients(result):
-        if download_client['name'] == name:
+        if download_client.name == name:
             return download_client
     return None
 
@@ -232,7 +232,7 @@ def update_download_client(want, result):
         except Exception as e:
             module.fail_json('Error updating download client: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_download_client(result):
@@ -271,25 +271,25 @@ def run_module():
     # Check if a resource is present already.
     state = find_download_client(module.params['name'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_download_client(result)
 
     # Set wanted resource.
-    want = radarr.DownloadClientResource(**{
-        'name': module.params['name'],
-        'remove_completed_downloads': module.params['remove_completed_downloads'],
-        'remove_failed_downloads': module.params['remove_failed_downloads'],
-        'enable': module.params['enable'],
-        'priority': module.params['priority'],
-        'config_contract': module.params['config_contract'],
-        'implementation': module.params['implementation'],
-        'protocol': module.params['protocol'],
-        'tags': module.params['tags'],
-        'fields': field_helper.populate_fields(module.params['fields']),
-    })
+    want = radarr.DownloadClientResource(
+        name=module.params['name'],
+        remove_completed_downloads=module.params['remove_completed_downloads'],
+        remove_failed_downloads=module.params['remove_failed_downloads'],
+        enable=module.params['enable'],
+        priority=module.params['priority'],
+        config_contract=module.params['config_contract'],
+        implementation=module.params['implementation'],
+        protocol=module.params['protocol'],
+        tags=module.params['tags'],
+        fields=field_helper.populate_fields(module.params['fields']),
+    )
 
     # Create a new resource, if needed.
     if result['id'] == 0:

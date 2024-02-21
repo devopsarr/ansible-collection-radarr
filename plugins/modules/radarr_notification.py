@@ -276,7 +276,7 @@ def create_notification(want, result):
             response = client.create_notification(notification_resource=want)
         except Exception as e:
             module.fail_json('Error creating notification: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -289,7 +289,7 @@ def list_notifications(result):
 
 def find_notification(name, result):
     for notification in list_notifications(result):
-        if notification['name'] == name:
+        if notification.name == name:
             return notification
     return None
 
@@ -303,7 +303,7 @@ def update_notification(want, result):
         except Exception as e:
             module.fail_json('Error updating notification: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_notification(result):
@@ -342,32 +342,32 @@ def run_module():
     # Check if a resource is present already.
     state = find_notification(module.params['name'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_notification(result)
 
     # Set wanted resource.
-    want = radarr.NotificationResource(**{
-        'name': module.params['name'],
-        'on_grab': module.params['on_grab'],
-        'on_download': module.params['on_download'],
-        'on_rename': module.params['on_rename'],
-        'on_movie_added': module.params['on_movie_add'],
-        'on_movie_delete': module.params['on_movie_delete'],
-        'on_movie_file_delete': module.params['on_movie_file_delete'],
-        'on_movie_file_delete_for_upgrade': module.params['on_movie_file_delete_for_upgrade'],
-        'on_health_issue': module.params['on_health_issue'],
-        'on_health_restored': module.params['on_health_restored'],
-        'on_application_update': module.params['on_application_update'],
-        'on_manual_interaction_required': module.params['on_manual_interaction_required'],
-        'on_upgrade': module.params['on_upgrade'],
-        'config_contract': module.params['config_contract'],
-        'implementation': module.params['implementation'],
-        'tags': module.params['tags'],
-        'fields': field_helper.populate_fields(module.params['fields']),
-    })
+    want = radarr.NotificationResource(
+        name=module.params['name'],
+        on_grab=module.params['on_grab'],
+        on_download=module.params['on_download'],
+        on_rename=module.params['on_rename'],
+        on_movie_added=module.params['on_movie_add'],
+        on_movie_delete=module.params['on_movie_delete'],
+        on_movie_file_delete=module.params['on_movie_file_delete'],
+        on_movie_file_delete_for_upgrade=module.params['on_movie_file_delete_for_upgrade'],
+        on_health_issue=module.params['on_health_issue'],
+        on_health_restored=module.params['on_health_restored'],
+        on_application_update=module.params['on_application_update'],
+        on_manual_interaction_required=module.params['on_manual_interaction_required'],
+        on_upgrade=module.params['on_upgrade'],
+        config_contract=module.params['config_contract'],
+        implementation=module.params['implementation'],
+        tags=module.params['tags'],
+        fields=field_helper.populate_fields(module.params['fields']),
+    )
 
     # Create a new resource if needed.
     if result['id'] == 0:

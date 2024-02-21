@@ -179,7 +179,7 @@ def create_delay_profile(want, result):
             response = client.create_delay_profile(delay_profile_resource=want)
         except Exception as e:
             module.fail_json('Error creating delay profile: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -192,7 +192,7 @@ def list_delay_profiles(result):
 
 def find_delay_profile(tags, result):
     for profile in list_delay_profiles(result):
-        if profile['tags'] == tags:
+        if profile.tags == tags:
             return profile
     return None
 
@@ -206,7 +206,7 @@ def update_delay_profile(want, result):
         except Exception as e:
             module.fail_json('Error updating delay profile: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_delay_profile(result):
@@ -241,25 +241,25 @@ def run_module():
     # Check if a resource is present already.
     state = find_delay_profile(module.params['tags'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_delay_profile(result)
 
     # Set wanted resource.
-    want = radarr.DelayProfileResource(**{
-        'enable_usenet': module.params['enable_usenet'],
-        'enable_torrent': module.params['enable_torrent'],
-        'preferred_protocol': module.params['preferred_protocol'],
-        'usenet_delay': module.params['usenet_delay'],
-        'torrent_delay': module.params['torrent_delay'],
-        'minimum_custom_format_score': module.params['minimum_custom_format_score'],
-        'bypass_if_highest_quality': module.params['bypass_if_highest_quality'],
-        'bypass_if_above_custom_format_score': module.params['bypass_if_above_custom_format_score'],
-        'order': module.params['order'],
-        'tags': module.params['tags'],
-    })
+    want = radarr.DelayProfileResource(
+        enable_usenet=module.params['enable_usenet'],
+        enable_torrent=module.params['enable_torrent'],
+        preferred_protocol=module.params['preferred_protocol'],
+        usenet_delay=module.params['usenet_delay'],
+        torrent_delay=module.params['torrent_delay'],
+        minimum_custom_format_score=module.params['minimum_custom_format_score'],
+        bypass_if_highest_quality=module.params['bypass_if_highest_quality'],
+        bypass_if_above_custom_format_score=module.params['bypass_if_above_custom_format_score'],
+        order=module.params['order'],
+        tags=module.params['tags'],
+    )
 
     # Create a new resource if needed.
     if result['id'] == 0:

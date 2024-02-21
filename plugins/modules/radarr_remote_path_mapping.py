@@ -109,7 +109,7 @@ def create_remote_path_mapping(want, result):
             response = client.create_remote_path_mapping(remote_path_mapping_resource=want)
         except Exception as e:
             module.fail_json('Error creating remote path mapping: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -122,9 +122,9 @@ def list_remote_path_mappings(result):
 
 def find_remote_path_mapping(host, remote_path, local_path, result):
     for mapping in list_remote_path_mappings(result):
-        if mapping['host'] == host and \
-           mapping['remote_path'] == remote_path and \
-           mapping['local_path'] == local_path:
+        if mapping.host == host and \
+           mapping.remote_path == remote_path and \
+           mapping.local_path == local_path:
             return mapping
     return None
 
@@ -138,7 +138,7 @@ def update_remote_path_mapping(want, result):
         except Exception as e:
             module.fail_json('Error updating remote path mapping: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_remote_path_mapping(result):
@@ -173,18 +173,18 @@ def run_module():
     # Check if a resource is present already.
     state = find_remote_path_mapping(module.params['host'], module.params['remote_path'], module.params['local_path'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_remote_path_mapping(result)
 
     # Set wanted resource.
-    want = radarr.RemotePathMappingResource(**{
-        'host': module.params['host'],
-        'remote_path': module.params['remote_path'],
-        'local_path': module.params['local_path'],
-    })
+    want = radarr.RemotePathMappingResource(
+        host=module.params['host'],
+        remote_path=module.params['remote_path'],
+        local_path=module.params['local_path'],
+    )
 
     # Create a new resource if needed.
     if result['id'] == 0:

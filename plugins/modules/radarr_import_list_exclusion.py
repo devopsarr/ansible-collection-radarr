@@ -109,7 +109,7 @@ def create_import_list_exclusion(want, result):
             response = client.create_exclusions(import_exclusions_resource=want)
         except Exception as e:
             module.fail_json('Error creating import list exclusion: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -122,8 +122,8 @@ def list_import_list_exclusions(result):
 
 def find_import_list_exclusion(title, tmdb_id, result):
     for import_list_exclusion in list_import_list_exclusions(result):
-        if import_list_exclusion['tmdb_id'] == tmdb_id and \
-           import_list_exclusion['movie_title'] == title:
+        if import_list_exclusion.tmdb_id == tmdb_id and \
+           import_list_exclusion.movie_title == title:
             return import_list_exclusion
     return None
 
@@ -160,18 +160,18 @@ def run_module():
     # Check if a resource is present already.
     state = find_import_list_exclusion(module.params['title'], module.params['tmdb_id'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_import_list_exclusion(result)
 
     # Set wanted resource.
-    want = radarr.ImportExclusionsResource(**{
-        'tmdb_id': module.params['tmdb_id'],
-        'movie_year': module.params['year'],
-        'movie_title': module.params['title'],
-    })
+    want = radarr.ImportExclusionsResource(
+        tmdb_id=module.params['tmdb_id'],
+        movie_year=module.params['year'],
+        movie_title=module.params['title'],
+    )
 
     # Create a new resource if needed.
     if result['id'] == 0:

@@ -3,6 +3,7 @@
 - name: edit download_client_config
   devopsarr.radarr.radarr_download_client_config:
     auto_redownload_failed: false
+    auto_redownload_failed_from_interactive_search: false
     enable_completed_download_handling: true
     check_for_finished_download_interval: 2
     radarr_api_key: "{{ radarr_api_key }}"
@@ -19,6 +20,7 @@
 - name: test idempotency
   devopsarr.radarr.radarr_download_client_config:
     auto_redownload_failed: false
+    auto_redownload_failed_from_interactive_search: false
     enable_completed_download_handling: true
     check_for_finished_download_interval: 2
     radarr_api_key: "{{ radarr_api_key }}"

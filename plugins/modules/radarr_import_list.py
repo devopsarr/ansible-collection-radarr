@@ -244,7 +244,7 @@ def create_import_list(want, result):
             response = client.create_import_list(import_list_resource=want)
         except Exception as e:
             module.fail_json('Error creating import list: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -257,7 +257,7 @@ def list_import_lists(result):
 
 def find_import_list(name, result):
     for import_list in list_import_lists(result):
-        if import_list['name'] == name:
+        if import_list.name == name:
             return import_list
     return None
 
@@ -271,7 +271,7 @@ def update_import_list(want, result):
         except Exception as e:
             module.fail_json('Error updating import list: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_import_list(result):
@@ -309,29 +309,29 @@ def run_module():
     # Check if a resource is present already.
     state = find_import_list(module.params['name'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_import_list(result)
 
     # Set wanted resource.
-    want = radarr.ImportListResource(**{
-        'name': module.params['name'],
-        'search_on_add': module.params['search_on_add'],
-        'quality_profile_id': module.params['quality_profile_id'],
-        'list_order': module.params['list_order'],
-        'monitor': module.params['monitor'],
-        'root_folder_path': module.params['root_folder_path'],
-        'config_contract': module.params['config_contract'],
-        'implementation': module.params['implementation'],
-        'list_type': module.params['list_type'],
-        'minimum_availability': module.params['minimum_availability'],
-        'enable_auto': module.params['enable_auto'],
-        'enabled': module.params['enabled'],
-        'tags': module.params['tags'],
-        'fields': field_helper.populate_fields(module.params['fields']),
-    })
+    want = radarr.ImportListResource(
+        name=module.params['name'],
+        search_on_add=module.params['search_on_add'],
+        quality_profile_id=module.params['quality_profile_id'],
+        list_order=module.params['list_order'],
+        monitor=module.params['monitor'],
+        root_folder_path=module.params['root_folder_path'],
+        config_contract=module.params['config_contract'],
+        implementation=module.params['implementation'],
+        list_type=module.params['list_type'],
+        minimum_availability=module.params['minimum_availability'],
+        enable_auto=module.params['enable_auto'],
+        enabled=module.params['enabled'],
+        tags=module.params['tags'],
+        fields=field_helper.populate_fields(module.params['fields']),
+    )
 
     # Create a new resource, if needed.
     if result['id'] == 0:

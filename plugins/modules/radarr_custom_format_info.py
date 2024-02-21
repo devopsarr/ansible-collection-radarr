@@ -98,10 +98,10 @@ def populate_custom_formats(result):
     # Check if a resource is present already.
     for custom_format in list_custom_formats(result):
         if module.params['name']:
-            if custom_format['name'] == module.params['name']:
-                custom_formats = [custom_format.dict(by_alias=False)]
+            if custom_format.name == module.params['name']:
+                custom_formats = [custom_format.model_dump(by_alias=False)]
         else:
-            custom_formats.append(custom_format.dict(by_alias=False))
+            custom_formats.append(custom_format.model_dump(by_alias=False))
     return custom_formats
 
 

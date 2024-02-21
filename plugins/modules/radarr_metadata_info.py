@@ -114,10 +114,10 @@ def populate_metadatas(result):
     # Check if a resource is present already.
     for metadata in list_metadatas(result):
         if module.params['name']:
-            if metadata['name'] == module.params['name']:
-                metadatas = [metadata.dict(by_alias=False)]
+            if metadata.name == module.params['name']:
+                metadatas = [metadata.model_dump(by_alias=False)]
         else:
-            metadatas.append(metadata.dict(by_alias=False))
+            metadatas.append(metadata.model_dump(by_alias=False))
     return metadatas
 
 

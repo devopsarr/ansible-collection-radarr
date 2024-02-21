@@ -157,7 +157,7 @@ def update_indexer_config(want, result):
         except Exception as e:
             module.fail_json('Error updating indexer config: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def run_module():
@@ -180,19 +180,19 @@ def run_module():
     # Get resource.
     state = read_indexer_config(result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
-    want = radarr.IndexerConfigResource(**{
-        'prefer_indexer_flags': module.params['prefer_indexer_flags'],
-        'allow_hardcoded_subs': module.params['allow_hardcoded_subs'],
-        'maximum_size': module.params['maximum_size'],
-        'minimum_age': module.params['minimum_age'],
-        'retention': module.params['retention'],
-        'rss_sync_interval': module.params['rss_sync_interval'],
-        'availability_delay': module.params['availability_delay'],
-        'whitelisted_hardcoded_subs': module.params['whitelisted_hardcoded_subs'],
-        'id': 1,
-    })
+    want = radarr.IndexerConfigResource(
+        prefer_indexer_flags=module.params['prefer_indexer_flags'],
+        allow_hardcoded_subs=module.params['allow_hardcoded_subs'],
+        maximum_size=module.params['maximum_size'],
+        minimum_age=module.params['minimum_age'],
+        retention=module.params['retention'],
+        rss_sync_interval=module.params['rss_sync_interval'],
+        availability_delay=module.params['availability_delay'],
+        whitelisted_hardcoded_subs=module.params['whitelisted_hardcoded_subs'],
+        id=1,
+    )
 
     # Update an existing resource.
     if want != state:

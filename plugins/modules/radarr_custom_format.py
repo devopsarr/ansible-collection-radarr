@@ -171,7 +171,7 @@ def create_custom_format(want, result):
             response = client.create_custom_format(custom_format_resource=want)
         except Exception as e:
             module.fail_json('Error creating custom format: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -184,7 +184,7 @@ def list_custom_formats(result):
 
 def find_custom_format(name, result):
     for custom_format in list_custom_formats(result):
-        if custom_format['name'] == name:
+        if custom_format.name == name:
             return custom_format
     return None
 
@@ -198,7 +198,7 @@ def update_custom_format(want, result):
         except Exception as e:
             module.fail_json('Error updating custom format: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_custom_format(result):
@@ -237,18 +237,18 @@ def run_module():
     # Check if a resource is present already.
     state = find_custom_format(module.params['name'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_custom_format(result)
 
     # Set wanted resource.
-    want = radarr.CustomFormatResource(**{
-        'name': module.params['name'],
-        'include_custom_format_when_renaming': module.params['include_custom_format_when_renaming'],
-        'specifications': specification_helper.populate_specifications(module.params['specifications'], 'custom_format'),
-    })
+    want = radarr.CustomFormatResource(
+        name=module.params['name'],
+        include_custom_format_when_renaming=module.params['include_custom_format_when_renaming'],
+        specifications=specification_helper.populate_specifications(module.params['specifications'], 'custom_format'),
+    )
 
     # Create a new resource, if needed.
     if result['id'] == 0:

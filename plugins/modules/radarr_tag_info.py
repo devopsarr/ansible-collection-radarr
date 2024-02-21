@@ -88,10 +88,10 @@ def populate_tags(result):
     tags = []
     for tag in list_tags(result):
         if module.params['label']:
-            if tag['label'] == module.params['label']:
-                tags = [tag.dict(by_alias=False)]
+            if tag.label == module.params['label']:
+                tags = [tag.model_dump(by_alias=False)]
         else:
-            tags.append(tag.dict(by_alias=False))
+            tags.append(tag.model_dump(by_alias=False))
     return tags
 
 

@@ -89,10 +89,10 @@ def populate_languages(result):
     # Check if a resource is present already.
     for language in list_languages(result):
         if module.params['name']:
-            if language['name'] == module.params['name']:
-                languages = [language.dict(by_alias=False)]
+            if language.name == module.params['name']:
+                languages = [language.model_dump(by_alias=False)]
         else:
-            languages.append(language.dict(by_alias=False))
+            languages.append(language.model_dump(by_alias=False))
     return languages
 
 

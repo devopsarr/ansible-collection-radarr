@@ -125,10 +125,10 @@ def populate_movie(result):
     # Check if a resource is present already.
     for single_movie in list_movie(result):
         if module.params['tmdb_id']:
-            if single_movie['tmdb_id'] == module.params['tmdb_id']:
-                movie = [single_movie.dict(by_alias=False)]
+            if single_movie.tmdb_id == module.params['tmdb_id']:
+                movie = [single_movie.model_dump(by_alias=False)]
         else:
-            movie.append(single_movie.dict(by_alias=False))
+            movie.append(single_movie.model_dump(by_alias=False))
     return movie
 
 

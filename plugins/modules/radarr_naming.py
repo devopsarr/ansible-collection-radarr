@@ -129,7 +129,7 @@ def update_naming(want, result):
         except Exception as e:
             module.fail_json('Error updating naming: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def run_module():
@@ -152,21 +152,21 @@ def run_module():
     # Get resource.
     state = read_naming(result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
-    want = radarr.NamingConfigResource(**{
-        'standard_movie_format': module.params['standard_movie_format'],
-        'movie_folder_format': module.params['movie_folder_format'],
-        'colon_replacement_format': module.params['colon_replacement_format'],
-        'rename_movies': module.params['rename_movies'],
-        'replace_illegal_characters': module.params['replace_illegal_characters'],
-        'id': 1,
+    want = radarr.NamingConfigResource(
+        standard_movie_format=module.params['standard_movie_format'],
+        movie_folder_format=module.params['movie_folder_format'],
+        colon_replacement_format=module.params['colon_replacement_format'],
+        rename_movies=module.params['rename_movies'],
+        replace_illegal_characters=module.params['replace_illegal_characters'],
+        id=1,
         # add not used parameters to compare resource
-        'include_quality': False,
-        'replace_spaces': False,
-        'separator': None,
-        'number_style': None,
-    })
+        include_quality=False,
+        replace_spaces=False,
+        separator=None,
+        number_style=None,
+    )
 
     # Update an existing resource.
     if want != state:

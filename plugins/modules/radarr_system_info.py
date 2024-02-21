@@ -201,7 +201,7 @@ def run_module():
     )
 
     # Get resources.
-    result.update(get_system_status(result).dict(by_alias=False))
+    result.update(get_system_status(result).model_dump(by_alias=False))
 
     # Exit with data.
     module.exit_json(**result)
