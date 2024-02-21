@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/devopsarr/ansible-collection-radarr/compare/v1.0.0...v1.1.0) (2024-02-21)
+
+
+### Features
+
+* add auto_redownload_failed_from_interactive_search to download client config ([232f0ef](https://github.com/devopsarr/ansible-collection-radarr/commit/232f0efcf17a4a82afc1b349f83ef1f26f7bde5b))
+* align with radarr-py v1 sdk ([7d90f98](https://github.com/devopsarr/ansible-collection-radarr/commit/7d90f98885a8713b93633c03c4e01b1c6730a3d9))
+
 ## [1.0.0](https://github.com/devopsarr/ansible-collection-radarr/compare/v0.1.0...v1.0.0) (2023-12-07)
 
 
