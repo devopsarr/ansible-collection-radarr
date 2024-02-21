@@ -84,7 +84,7 @@ def create_tag(want, result):
             response = client.create_tag(tag_resource=want)
         except Exception as e:
             module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -97,7 +97,7 @@ def list_tags(result):
 
 def find_tag(label, result):
     for tag in list_tags(result):
-        if tag['label'] == label:
+        if tag.label == label:
             return tag
     return None
 
@@ -133,7 +133,7 @@ def run_module():
     # Check if a resource is present already.
     state = find_tag(module.params['label'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':

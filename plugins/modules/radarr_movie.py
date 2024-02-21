@@ -174,7 +174,7 @@ def create_movie(want, result):
             response = client.create_movie(movie_resource=want)
         except Exception as e:
             module.fail_json('Error creating movie: %s' % to_native(e.reason), **result)
-        result.update(response.dict(by_alias=False))
+        result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
 
@@ -187,7 +187,7 @@ def list_movie(result):
 
 def find_movie(tmdb_id, result):
     for movie in list_movie(result):
-        if movie['tmdb_id'] == tmdb_id:
+        if movie.tmdb_id == tmdb_id:
             return movie
     return None
 
@@ -201,7 +201,7 @@ def update_movie(want, result):
         except Exception as e:
             module.fail_json('Error updating movie: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def delete_movie(result):
@@ -236,27 +236,27 @@ def run_module():
     # Check if a resource is present already.
     state = find_movie(module.params['tmdb_id'], result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
     # Delete the resource if needed.
     if module.params['state'] == 'absent':
         delete_movie(result)
 
     # Set wanted resource.
-    want = radarr.MovieResource(**{
-        'title': module.params['title'],
-        'monitored': module.params['monitored'],
-        'quality_profile_id': module.params['quality_profile_id'],
-        'tmdb_id': module.params['tmdb_id'],
-        'path': module.params['path'],
-        'minimum_availability': module.params['minimum_availability'],
-        'root_folder_path': module.params['root_folder_path'],
-        'tags': module.params['tags'],
-        'add_options': radarr.AddMovieOptions(**{
-            'monitor': 'movieOnly',
-            'search_for_movie': True,
-        }),
-    })
+    want = radarr.MovieResource(
+        title=module.params['title'],
+        monitored=module.params['monitored'],
+        quality_profile_id=module.params['quality_profile_id'],
+        tmdb_id=module.params['tmdb_id'],
+        path=module.params['path'],
+        minimum_availability=module.params['minimum_availability'],
+        root_folder_path=module.params['root_folder_path'],
+        tags=module.params['tags'],
+        add_options=radarr.AddMovieOptions(
+            monitor='movieOnly',
+            search_for_movie=True,
+        ),
+    )
 
     # Create a new resource if needed.
     if result['id'] == 0:

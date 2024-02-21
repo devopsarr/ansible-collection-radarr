@@ -305,7 +305,7 @@ def update_media_management(want, result):
         except Exception as e:
             module.fail_json('Error updating media management: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def run_module():
@@ -328,32 +328,32 @@ def run_module():
     # Get resource.
     state = read_media_management(result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
-    want = radarr.MediaManagementConfigResource(**{
-        'chmod_folder': module.params['chmod_folder'],
-        'rescan_after_refresh': module.params['rescan_after_refresh'],
-        'recycle_bin': module.params['recycle_bin'],
-        'script_import_path': module.params['script_import_path'],
-        'file_date': module.params['file_date'],
-        'extra_file_extensions': module.params['extra_file_extensions'],
-        'download_propers_and_repacks': module.params['download_propers_and_repacks'],
-        'chown_group': module.params['chown_group'],
-        'id': 1,
-        'minimum_free_space_when_importing': module.params['minimum_free_space_when_importing'],
-        'recycle_bin_cleanup_days': module.params['recycle_bin_cleanup_days'],
-        'use_script_import': module.params['use_script_import'],
-        'auto_unmonitor_previously_downloaded_movies': module.params['auto_unmonitor_previously_downloaded_movies'],
-        'skip_free_space_check_when_importing': module.params['skip_free_space_check_when_importing'],
-        'set_permissions_linux': module.params['set_permissions_linux'],
-        'import_extra_files': module.params['import_extra_files'],
-        'enable_media_info': module.params['enable_media_info'],
-        'delete_empty_folders': module.params['delete_empty_folders'],
-        'create_empty_movie_folders': module.params['create_empty_movie_folders'],
-        'copy_using_hardlinks': module.params['copy_using_hardlinks'],
-        'auto_rename_folders': module.params['auto_rename_folders'],
-        'paths_default_static': module.params['paths_default_static'],
-    })
+    want = radarr.MediaManagementConfigResource(
+        chmod_folder=module.params['chmod_folder'],
+        rescan_after_refresh=module.params['rescan_after_refresh'],
+        recycle_bin=module.params['recycle_bin'],
+        script_import_path=module.params['script_import_path'],
+        file_date=module.params['file_date'],
+        extra_file_extensions=module.params['extra_file_extensions'],
+        download_propers_and_repacks=module.params['download_propers_and_repacks'],
+        chown_group=module.params['chown_group'],
+        id=1,
+        minimum_free_space_when_importing=module.params['minimum_free_space_when_importing'],
+        recycle_bin_cleanup_days=module.params['recycle_bin_cleanup_days'],
+        use_script_import=module.params['use_script_import'],
+        auto_unmonitor_previously_downloaded_movies=module.params['auto_unmonitor_previously_downloaded_movies'],
+        skip_free_space_check_when_importing=module.params['skip_free_space_check_when_importing'],
+        set_permissions_linux=module.params['set_permissions_linux'],
+        import_extra_files=module.params['import_extra_files'],
+        enable_media_info=module.params['enable_media_info'],
+        delete_empty_folders=module.params['delete_empty_folders'],
+        create_empty_movie_folders=module.params['create_empty_movie_folders'],
+        copy_using_hardlinks=module.params['copy_using_hardlinks'],
+        auto_rename_folders=module.params['auto_rename_folders'],
+        paths_default_static=module.params['paths_default_static'],
+    )
 
     # Update an existing resource.
     if want != state:

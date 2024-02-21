@@ -108,10 +108,10 @@ def populate_qualities(result):
     # Check if a resource is present already.
     for quality in list_qualities(result):
         if module.params['name']:
-            if quality['quality']['name'] == module.params['name']:
-                qualities = [quality.dict(by_alias=False)]
+            if quality.quality.name == module.params['name']:
+                qualities = [quality.model_dump(by_alias=False)]
         else:
-            qualities.append(quality.dict(by_alias=False))
+            qualities.append(quality.model_dump(by_alias=False))
     return qualities
 
 

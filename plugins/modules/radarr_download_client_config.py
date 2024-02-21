@@ -110,7 +110,7 @@ def update_download_client_config(want, result):
         except Exception as e:
             module.fail_json('Error updating download client config: %s' % to_native(e.reason), **result)
     # No need to exit module since it will exit by default either way
-    result.update(response.dict(by_alias=False))
+    result.update(response.model_dump(by_alias=False))
 
 
 def run_module():
@@ -133,15 +133,15 @@ def run_module():
     # Get resource.
     state = read_download_client_config(result)
     if state:
-        result.update(state.dict(by_alias=False))
+        result.update(state.model_dump(by_alias=False))
 
-    want = radarr.DownloadClientConfigResource(**{
-        'enable_completed_download_handling': module.params['enable_completed_download_handling'],
-        'auto_redownload_failed': module.params['auto_redownload_failed'],
-        'check_for_finished_download_interval': module.params['check_for_finished_download_interval'],
-        'download_client_working_folders': '_UNPACK_|_FAILED_',
-        'id': 1,
-    })
+    want = radarr.DownloadClientConfigResource(
+        enable_completed_download_handling=module.params['enable_completed_download_handling'],
+        auto_redownload_failed=module.params['auto_redownload_failed'],
+        check_for_finished_download_interval=module.params['check_for_finished_download_interval'],
+        download_client_working_folders='_UNPACK_|_FAILED_',
+        id=1,
+    )
 
     # Update an existing resource.
     if want != state:

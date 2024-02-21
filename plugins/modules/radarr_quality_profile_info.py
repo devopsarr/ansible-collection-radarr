@@ -128,10 +128,10 @@ def populate_quality_profiles(result):
     # Check if a resource is present already.
     for profile in list_quality_profile(result):
         if module.params['name']:
-            if profile['name'] == module.params['name']:
-                profiles = [profile.dict(by_alias=False)]
+            if profile.name == module.params['name']:
+                profiles = [profile.model_dump(by_alias=False)]
         else:
-            profiles.append(profile.dict(by_alias=False))
+            profiles.append(profile.model_dump(by_alias=False))
     return profiles
 
 

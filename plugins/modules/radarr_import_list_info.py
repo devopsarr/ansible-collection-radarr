@@ -144,10 +144,10 @@ def populate_import_lists(result):
     # Check if a resource is present already.
     for import_list in list_import_lists(result):
         if module.params['name']:
-            if import_list['name'] == module.params['name']:
-                import_lists = [import_list.dict(by_alias=False)]
+            if import_list.name == module.params['name']:
+                import_lists = [import_list.model_dump(by_alias=False)]
         else:
-            import_lists.append(import_list.dict(by_alias=False))
+            import_lists.append(import_list.model_dump(by_alias=False))
     return import_lists
 
 

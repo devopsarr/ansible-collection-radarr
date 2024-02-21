@@ -20,15 +20,15 @@ class FieldHelper():
         )
 
     def populate_fields(self, field_list):
-        # type: (list) -> list[radarr.Field]
+        # type: (list) -> list[radarr.ContractField]
         fields = []
 
         for field in field_list:
             fields.append(
-                radarr.Field(**{
-                    'name': field['name'],
-                    'value': field['value'],
-                }),
+                radarr.ContractField(
+                    name=field['name'],
+                    value=field['value'],
+                ),
             )
 
         return fields

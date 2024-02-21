@@ -99,10 +99,10 @@ def populate_remote_path_mappings(result):
     # Check if a resource is present already.
     for remote_path_mapping in list_remote_path_mapping(result):
         if module.params['id']:
-            if remote_path_mapping['id'] == module.params['id']:
-                mappings = [remote_path_mapping.dict(by_alias=False)]
+            if remote_path_mapping.id == module.params['id']:
+                mappings = [remote_path_mapping.model_dump(by_alias=False)]
         else:
-            mappings.append(remote_path_mapping.dict(by_alias=False))
+            mappings.append(remote_path_mapping.model_dump(by_alias=False))
     return mappings
 
 

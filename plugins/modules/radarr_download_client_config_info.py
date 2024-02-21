@@ -92,7 +92,7 @@ def run_module():
     )
 
     # Get resource.
-    result.update(get_download_client_config(result).dict(by_alias=False))
+    result.update(get_download_client_config(result).model_dump(by_alias=False))
 
     # Exit with data.
     module.exit_json(**result)

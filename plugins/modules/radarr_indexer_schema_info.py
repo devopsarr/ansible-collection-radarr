@@ -139,10 +139,10 @@ def populate_indexer_schema(result):
     # Check if a resource is present already.
     for indexer in list_indexer_schema(result):
         if module.params['name']:
-            if indexer['implementation'] == module.params['name']:
-                indexers = [indexer.dict(by_alias=False)]
+            if indexer.implementation == module.params['name']:
+                indexers = [indexer.model_dump(by_alias=False)]
         else:
-            indexers.append(indexer.dict(by_alias=False))
+            indexers.append(indexer.model_dump(by_alias=False))
     return indexers
 
 

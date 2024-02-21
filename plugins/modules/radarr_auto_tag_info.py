@@ -104,10 +104,10 @@ def populate_auto_tags(result):
     # Check if a resource is present already.
     for auto_tag in list_auto_tags(result):
         if module.params['name']:
-            if auto_tag['name'] == module.params['name']:
-                auto_tags = [auto_tag.dict(by_alias=False)]
+            if auto_tag.name == module.params['name']:
+                auto_tags = [auto_tag.model_dump(by_alias=False)]
         else:
-            auto_tags.append(auto_tag.dict(by_alias=False))
+            auto_tags.append(auto_tag.model_dump(by_alias=False))
     return auto_tags
 
 

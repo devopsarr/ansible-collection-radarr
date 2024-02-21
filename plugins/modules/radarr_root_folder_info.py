@@ -99,10 +99,10 @@ def populate_root_folders(result):
     # Check if a resource is present already.
     for root_folder in list_root_folder(result):
         if module.params['path']:
-            if root_folder['path'] == module.params['path']:
-                folders = [root_folder.dict(by_alias=False)]
+            if root_folder.path == module.params['path']:
+                folders = [root_folder.model_dump(by_alias=False)]
         else:
-            folders.append(root_folder.dict(by_alias=False))
+            folders.append(root_folder.model_dump(by_alias=False))
     return folders
 
 
