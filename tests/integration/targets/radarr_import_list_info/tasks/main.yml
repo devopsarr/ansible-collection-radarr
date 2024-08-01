@@ -16,7 +16,7 @@
         value: "Key"
       - name: "baseUrl"
         value: "localhost"
-      - name: "languageProfileIds"
+      - name: "profileIds"
         value: [1]
     config_contract: "RadarrSettings"
     implementation: "RadarrImport"
