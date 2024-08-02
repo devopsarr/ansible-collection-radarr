@@ -1,4 +1,10 @@
 ---
+- name: create root folder dependency
+  devopsarr.radarr.radarr_root_folder:
+    path: '/config'
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+
 - name: create import list
   devopsarr.radarr.radarr_import_list:
     name: "{{ item }}"
@@ -59,3 +65,10 @@
   with_items:
     - 'info_test'
     - 'info_test1'
+
+- name: clean up root folder
+  devopsarr.radarr.radarr_root_folder:
+    path: '/config'
+    state: 'absent'
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
