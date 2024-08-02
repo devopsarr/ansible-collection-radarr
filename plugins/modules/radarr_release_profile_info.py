@@ -104,9 +104,9 @@ def list_release_profile(result):
     try:
         return client.list_release_profile()
     except radarr.ApiException as e:
-        module.fail_json('Error listing release profiles: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing release profiles: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing release profiles: %s' % to_native(e), **result)
+        module.fail_json('Error listing release profiles: {}'.format(to_native(e)), **result)
 
 
 def populate_release_profile(result):

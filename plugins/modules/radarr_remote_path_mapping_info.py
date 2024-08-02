@@ -91,9 +91,9 @@ def list_remote_path_mapping(result):
     try:
         return client.list_remote_path_mapping()
     except radarr.ApiException as e:
-        module.fail_json('Error listing remote path mappings: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing remote path mappings: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing remote path mappings: %s' % to_native(e), **result)
+        module.fail_json('Error listing remote path mappings: {}'.format(to_native(e)), **result)
 
 
 def populate_remote_path_mappings(result):

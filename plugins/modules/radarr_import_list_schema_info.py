@@ -136,9 +136,9 @@ def list_import_list_schema(result):
     try:
         return client.list_import_list_schema()
     except radarr.ApiException as e:
-        module.fail_json('Error listing import list schemas: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing import list schemas: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing import list schemas: %s' % to_native(e), **result)
+        module.fail_json('Error listing import list schemas: {}'.format(to_native(e)), **result)
 
 
 def populate_import_list_schema(result):

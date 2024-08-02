@@ -93,9 +93,9 @@ def create_root_folder(want, result):
         try:
             response = client.create_root_folder(root_folder_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating root folder: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating root folder: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating root folder: %s' % to_native(e), **result)
+            module.fail_json('Error creating root folder: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -104,9 +104,9 @@ def list_root_folders(result):
     try:
         return client.list_root_folder()
     except radarr.ApiException as e:
-        module.fail_json('Error listing root folders: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing root folders: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing root folders: %s' % to_native(e), **result)
+        module.fail_json('Error listing root folders: {}'.format(to_native(e)), **result)
 
 
 def find_root_folder(path, result):
@@ -123,9 +123,9 @@ def delete_root_folder(result):
             try:
                 client.delete_root_folder(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting root folder: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting root folder: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting root folder: %s' % to_native(e), **result)
+                module.fail_json('Error deleting root folder: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

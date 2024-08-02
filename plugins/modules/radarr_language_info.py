@@ -81,9 +81,9 @@ def list_languages(result):
     try:
         return client.list_language()
     except radarr.ApiException as e:
-        module.fail_json('Error getting languages: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error getting languages: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting languages: %s' % to_native(e), **result)
+        module.fail_json('Error getting languages: {}'.format(to_native(e)), **result)
 
 
 def populate_languages(result):

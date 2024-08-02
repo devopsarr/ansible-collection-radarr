@@ -126,9 +126,9 @@ def list_download_client_schema(result):
     try:
         return client.list_download_client_schema()
     except radarr.ApiException as e:
-        module.fail_json('Error listing download client schemas: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing download client schemas: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing download client schemas: %s' % to_native(e), **result)
+        module.fail_json('Error listing download client schemas: {}'.format(to_native(e)), **result)
 
 
 def populate_download_client_schema(result):

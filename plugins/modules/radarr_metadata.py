@@ -142,9 +142,9 @@ def create_metadata(want, result):
         try:
             response = client.create_metadata(metadata_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating metadata: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating metadata: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating metadata: %s' % to_native(e), **result)
+            module.fail_json('Error creating metadata: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -153,9 +153,9 @@ def list_metadata(result):
     try:
         return client.list_metadata()
     except radarr.ApiException as e:
-        module.fail_json('Error listing metadata: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing metadata: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing metadata: %s' % to_native(e), **result)
+        module.fail_json('Error listing metadata: {}'.format(to_native(e)), **result)
 
 
 def find_metadata(name, result):
@@ -172,9 +172,9 @@ def update_metadata(want, result):
         try:
             response = client.update_metadata(metadata_resource=want, id=str(want.id))
         except radarr.ApiException as e:
-            module.fail_json('Error updating metadata: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating metadata: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating metadata: %s' % to_native(e), **result)
+            module.fail_json('Error updating metadata: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -186,9 +186,9 @@ def delete_metadata(result):
             try:
                 client.delete_metadata(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting metadata: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting metadata: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting metadata: %s' % to_native(e), **result)
+                module.fail_json('Error deleting metadata: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

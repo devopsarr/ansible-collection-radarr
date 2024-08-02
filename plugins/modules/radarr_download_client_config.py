@@ -109,9 +109,9 @@ def read_download_client_config(result):
     try:
         return client.get_download_client_config()
     except radarr.ApiException as e:
-        module.fail_json('Error getting download client config: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error getting download client config: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting download client config: %s' % to_native(e), **result)
+        module.fail_json('Error getting download client config: {}'.format(to_native(e)), **result)
 
 
 def update_download_client_config(want, result):
@@ -121,9 +121,9 @@ def update_download_client_config(want, result):
         try:
             response = client.update_download_client_config(download_client_config_resource=want, id="1")
         except radarr.ApiException as e:
-            module.fail_json('Error updating download client config: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating download client config: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating download client config: %s' % to_native(e), **result)
+            module.fail_json('Error updating download client config: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 

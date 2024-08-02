@@ -117,9 +117,9 @@ def list_movie(result):
     try:
         return client.list_movie()
     except radarr.ApiException as e:
-        module.fail_json('Error listing movie: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing movie: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing movie: %s' % to_native(e), **result)
+        module.fail_json('Error listing movie: {}'.format(to_native(e)), **result)
 
 
 def populate_movie(result):

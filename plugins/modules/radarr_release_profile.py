@@ -132,9 +132,9 @@ def create_release_profile(want, result):
         try:
             response = client.create_release_profile(release_profile_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating release profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating release profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating release profile: %s' % to_native(e), **result)
+            module.fail_json('Error creating release profile: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -143,9 +143,9 @@ def list_release_profiles(result):
     try:
         return client.list_release_profile()
     except radarr.ApiException as e:
-        module.fail_json('Error listing release profiles: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing release profiles: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing release profiles: %s' % to_native(e), **result)
+        module.fail_json('Error listing release profiles: {}'.format(to_native(e)), **result)
 
 
 def find_release_profile(name, result):
@@ -162,9 +162,9 @@ def update_release_profile(want, result):
         try:
             response = client.update_release_profile(release_profile_resource=want, id=str(want.id))
         except radarr.ApiException as e:
-            module.fail_json('Error updating release profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating release profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating release profile: %s' % to_native(e), **result)
+            module.fail_json('Error updating release profile: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -176,9 +176,9 @@ def delete_release_profile(result):
             try:
                 client.delete_release_profile(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting release profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting release profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting release profile: %s' % to_native(e), **result)
+                module.fail_json('Error deleting release profile: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

@@ -178,9 +178,9 @@ def create_delay_profile(want, result):
         try:
             response = client.create_delay_profile(delay_profile_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating delay profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating delay profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating delay profile: %s' % to_native(e), **result)
+            module.fail_json('Error creating delay profile: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -189,9 +189,9 @@ def list_delay_profiles(result):
     try:
         return client.list_delay_profile()
     except radarr.ApiException as e:
-        module.fail_json('Error listing delay profiles: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing delay profiles: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing delay profiles: %s' % to_native(e), **result)
+        module.fail_json('Error listing delay profiles: {}'.format(to_native(e)), **result)
 
 
 def find_delay_profile(tags, result):
@@ -208,9 +208,9 @@ def update_delay_profile(want, result):
         try:
             response = client.update_delay_profile(delay_profile_resource=want, id=str(want.id))
         except radarr.ApiException as e:
-            module.fail_json('Error updating delay profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating delay profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating delay profile: %s' % to_native(e), **result)
+            module.fail_json('Error updating delay profile: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -222,9 +222,9 @@ def delete_delay_profile(result):
             try:
                 client.delete_delay_profile(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting delay profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting delay profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting delay profile: %s' % to_native(e), **result)
+                module.fail_json('Error deleting delay profile: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

@@ -228,9 +228,9 @@ def create_quality_profile(want, result):
         try:
             response = client.create_quality_profile(quality_profile_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating quality profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating quality profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating quality profile: %s' % to_native(e), **result)
+            module.fail_json('Error creating quality profile: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -239,9 +239,9 @@ def list_quality_profiles(result):
     try:
         return client.list_quality_profile()
     except radarr.ApiException as e:
-        module.fail_json('Error listing quality profiles: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing quality profiles: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing quality profiles: %s' % to_native(e), **result)
+        module.fail_json('Error listing quality profiles: {}'.format(to_native(e)), **result)
 
 
 def find_quality_profile(name, result):
@@ -258,9 +258,9 @@ def update_quality_profile(want, result):
         try:
             response = client.update_quality_profile(quality_profile_resource=want, id=str(want.id))
         except radarr.ApiException as e:
-            module.fail_json('Error updating quality profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating quality profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating quality profile: %s' % to_native(e), **result)
+            module.fail_json('Error updating quality profile: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -272,9 +272,9 @@ def delete_quality_profile(result):
             try:
                 client.delete_quality_profile(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting quality profile: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting quality profile: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting quality profile: %s' % to_native(e), **result)
+                module.fail_json('Error deleting quality profile: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 
@@ -286,9 +286,9 @@ def populate_quality_groups(result):
     try:
         all_qualities = temp_client.list_quality_definition()
     except radarr.ApiException as e:
-        module.fail_json('Error listing qualities: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing qualities: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing qualities: %s' % to_native(e), **result)
+        module.fail_json('Error listing qualities: {}'.format(to_native(e)), **result)
 
     quality_groups = []
     allowed_qualities = []
@@ -368,9 +368,9 @@ def populate_formats(result):
     try:
         all_formats = temp_client.list_custom_format()
     except radarr.ApiException as e:
-        module.fail_json('Error listing formats: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing formats: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing formats: %s' % to_native(e), **result)
+        module.fail_json('Error listing formats: {}'.format(to_native(e)), **result)
 
     for f in all_formats:
         if f.id not in used_formats:

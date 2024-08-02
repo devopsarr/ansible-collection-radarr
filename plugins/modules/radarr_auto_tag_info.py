@@ -96,9 +96,9 @@ def list_auto_tags(result):
     try:
         return client.list_auto_tagging()
     except radarr.ApiException as e:
-        module.fail_json('Error listing auto tags: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing auto tags: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing auto tags: %s' % to_native(e), **result)
+        module.fail_json('Error listing auto tags: {}'.format(to_native(e)), **result)
 
 
 def populate_auto_tags(result):

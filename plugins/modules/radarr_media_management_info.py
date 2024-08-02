@@ -153,9 +153,9 @@ def get_media_management_config(result):
     try:
         return client.get_media_management_config()
     except radarr.ApiException as e:
-        module.fail_json('Error getting media management: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error getting media management: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting media management: %s' % to_native(e), **result)
+        module.fail_json('Error getting media management: {}'.format(to_native(e)), **result)
 
 
 def run_module():

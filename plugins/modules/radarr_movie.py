@@ -173,9 +173,9 @@ def create_movie(want, result):
         try:
             response = client.create_movie(movie_resource=want)
         except radarr.ApiException as e:
-            module.fail_json('Error creating movie: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error creating movie: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating movie: %s' % to_native(e), **result)
+            module.fail_json('Error creating movie: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -184,9 +184,9 @@ def list_movie(result):
     try:
         return client.list_movie()
     except radarr.ApiException as e:
-        module.fail_json('Error listing movie: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing movie: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing movie: %s' % to_native(e), **result)
+        module.fail_json('Error listing movie: {}'.format(to_native(e)), **result)
 
 
 def find_movie(tmdb_id, result):
@@ -203,9 +203,9 @@ def update_movie(want, result):
         try:
             response = client.update_movie(movie_resource=want, id=str(want.id))
         except radarr.ApiException as e:
-            module.fail_json('Error updating movie: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+            module.fail_json('Error updating movie: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating movie: %s' % to_native(e), **result)
+            module.fail_json('Error updating movie: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -217,9 +217,9 @@ def delete_movie(result):
             try:
                 client.delete_movie(result['id'])
             except radarr.ApiException as e:
-                module.fail_json('Error deleting movie: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+                module.fail_json('Error deleting movie: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting movie: %s' % to_native(e), **result)
+                module.fail_json('Error deleting movie: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

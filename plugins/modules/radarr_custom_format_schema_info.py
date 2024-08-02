@@ -85,9 +85,9 @@ def list_custom_format_schema(result):
     try:
         return client.list_custom_format_schema()
     except radarr.ApiException as e:
-        module.fail_json('Error listing custom formats: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
+        module.fail_json('Error listing custom formats: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing custom formats: %s' % to_native(e), **result)
+        module.fail_json('Error listing custom formats: {}'.format(to_native(e)), **result)
 
 
 def populate_custom_format_schema(result):
