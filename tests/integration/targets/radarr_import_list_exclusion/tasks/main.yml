@@ -1,40 +1,40 @@
 ---
-- name: create import list exclusion
+- name: Create import list exclusion
   devopsarr.radarr.radarr_import_list_exclusion:
-    title: 'gladiator'
+    title: gladiator
     tmdb_id: 12345
     year: 1990
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list exclusion creation
-  assert:
+- name: Assert import list exclusion creation
+  ansible.builtin.assert:
     that:
       - result['tmdb_id'] == 12345
 # ----------------------------------------------------------------------------
-- name: check idempotency
+- name: Check idempotency
   devopsarr.radarr.radarr_import_list_exclusion:
-    title: 'gladiator'
+    title: gladiator
     tmdb_id: 12345
     year: 1990
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list exclusion idempotency
-  assert:
+- name: Assert import list exclusion idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: delete import list exclusion
+- name: Delete import list exclusion
   devopsarr.radarr.radarr_import_list_exclusion:
-    title: 'gladiator'
+    title: gladiator
     tmdb_id: 12345
     year: 1990
     state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list exclusion deletion
-  assert:
+- name: Assert import list exclusion deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0

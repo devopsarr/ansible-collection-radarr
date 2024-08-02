@@ -1,40 +1,40 @@
 ---
-    - name: create remote path mapping
-      devopsarr.radarr.radarr_remote_path_mapping:
-        host: 'transmission'
-        remote_path: '/tmp/'
-        local_path: '/tmp/'
-        radarr_api_key: "{{ radarr_api_key }}"
-        radarr_url: "{{ radarr_url }}"
-      register: result
-    - name: assert remote path mapping creation
-      assert:
-        that:
-          - result['remote_path'] == '/tmp/'
-    # ----------------------------------------------------------------------------
-    - name: check idempotency
-      devopsarr.radarr.radarr_remote_path_mapping:
-        host: 'transmission'
-        remote_path: '/tmp/'
-        local_path: '/tmp/'
-        radarr_api_key: "{{ radarr_api_key }}"
-        radarr_url: "{{ radarr_url }}"
-      register: result
-    - name: assert remote path mapping idempotency
-      assert:
-        that:
-          - result.changed == false
-    # ----------------------------------------------------------------------------
-    - name: delete remote path mapping
-      devopsarr.radarr.radarr_remote_path_mapping:
-        host: 'transmission'
-        remote_path: '/tmp/'
-        local_path: '/tmp/'
-        state: absent
-        radarr_api_key: "{{ radarr_api_key }}"
-        radarr_url: "{{ radarr_url }}"
-      register: result
-    - name: assert remote path mapping deletion
-      assert:
-        that:
-          - result['id'] == 0
+- name: Create remote path mapping
+  devopsarr.radarr.radarr_remote_path_mapping:
+    host: transmission
+    remote_path: /tmp/
+    local_path: /tmp/
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: Assert remote path mapping creation
+  ansible.builtin.assert:
+    that:
+      - result['remote_path'] == '/tmp/'
+# ----------------------------------------------------------------------------
+- name: Check idempotency
+  devopsarr.radarr.radarr_remote_path_mapping:
+    host: transmission
+    remote_path: /tmp/
+    local_path: /tmp/
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: Assert remote path mapping idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Delete remote path mapping
+  devopsarr.radarr.radarr_remote_path_mapping:
+    host: transmission
+    remote_path: /tmp/
+    local_path: /tmp/
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+  register: result
+- name: Assert remote path mapping deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0

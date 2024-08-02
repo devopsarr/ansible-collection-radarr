@@ -1,66 +1,66 @@
 ---
-- name: create movie
+- name: Create movie
   devopsarr.radarr.radarr_movie:
-    title: "The Matrix"
+    title: The Matrix
     tmdb_id: 603
     monitored: false
-    path: "/config/the-matrix"
-    root_folder_path: "/config"
+    path: /config/the-matrix
+    root_folder_path: /config
     quality_profile_id: 1
-    minimum_availability: "announced"
+    minimum_availability: announced
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert movie creation
-  assert:
+- name: Assert movie creation
+  ansible.builtin.assert:
     that:
       - result['tmdb_id'] == 603
 # ----------------------------------------------------------------------------
-- name: edit already present movie
+- name: Edit already present movie
   devopsarr.radarr.radarr_movie:
-    title: "The Matrix"
+    title: The Matrix
     tmdb_id: 603
     monitored: true
-    path: "/config/the-matrix"
-    root_folder_path: "/config"
+    path: /config/the-matrix
+    root_folder_path: /config
     quality_profile_id: 1
-    minimum_availability: "announced"
+    minimum_availability: announced
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert movie changes
-  assert:
+- name: Assert movie changes
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: test idempotency
+- name: Test idempotency
   devopsarr.radarr.radarr_movie:
-    title: "The Matrix"
+    title: The Matrix
     tmdb_id: 603
     monitored: true
-    path: "/config/the-matrix"
-    root_folder_path: "/config"
+    path: /config/the-matrix
+    root_folder_path: /config
     quality_profile_id: 1
-    minimum_availability: "announced"
+    minimum_availability: announced
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert movie idempotency
-  assert:
+- name: Assert movie idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: delete movie
+- name: Delete movie
   devopsarr.radarr.radarr_movie:
-    title: "The Matrix"
+    title: The Matrix
     tmdb_id: 603
-    path: "/config/the-matrix"
-    minimum_availability: "announced"
+    path: /config/the-matrix
+    minimum_availability: announced
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
-    state: 'absent'
+    state: absent
   register: result
-- name: assert movie deletion
-  assert:
+- name: Assert movie deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0

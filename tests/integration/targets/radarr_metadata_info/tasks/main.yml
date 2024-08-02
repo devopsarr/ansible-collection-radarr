@@ -1,48 +1,48 @@
 ---
-- name: create metadata
+- name: Create metadata
   devopsarr.radarr.radarr_metadata:
     name: "{{ item }}"
-    config_contract: "MediaBrowserMetadataSettings"
-    implementation: "MediaBrowserMetadata"
+    config_contract: MediaBrowserMetadataSettings
+    implementation: MediaBrowserMetadata
     enable: true
     fields:
-    - name: "movieMetadata"
-      value: true
+      - name: movieMetadata
+        value: true
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   with_items:
-    - 'info_test'
-    - 'info_test1'
+    - info_test
+    - info_test1
 
-- name: list a single metadata
+- name: List a single metadata
   devopsarr.radarr.radarr_metadata_info:
-    name: "info_test"
+    name: info_test
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single metadata
-  assert:
+- name: Assert single metadata
+  ansible.builtin.assert:
     that:
       - result['metadatas'][0]['name'] == 'info_test'
 # ----------------------------------------------------------------------------
-- name: list all metadatas
+- name: List all metadatas
   devopsarr.radarr.radarr_metadata_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple metadatas
-  assert:
+- name: Assert multiple metadatas
+  ansible.builtin.assert:
     that:
       - result['metadatas'] | length > 1
 # ----------------------------------------------------------------------------
-- name: clean up metadata
+- name: Clean up metadata
   devopsarr.radarr.radarr_metadata:
     name: "{{ item }}"
     state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   with_items:
-    - 'info_test'
-    - 'info_test1'
+    - info_test
+    - info_test1

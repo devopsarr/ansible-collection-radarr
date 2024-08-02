@@ -1,23 +1,23 @@
 ---
-- name: list a single notification schema
+- name: List a single notification schema
   devopsarr.radarr.radarr_notification_schema_info:
-    name: "CustomScript"
+    name: CustomScript
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single notification
-  assert:
+- name: Assert single notification
+  ansible.builtin.assert:
     that:
       - result['notifications'][0]['implementation'] == 'CustomScript'
 # ----------------------------------------------------------------------------
-- name: list all notification schemas
+- name: List all notification schemas
   devopsarr.radarr.radarr_notification_schema_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple notification schemas
-  assert:
+- name: Assert multiple notification schemas
+  ansible.builtin.assert:
     that:
       - result['notifications'] | length > 1

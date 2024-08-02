@@ -1,63 +1,63 @@
 ---
-- name: create metadata
+- name: Create metadata
   devopsarr.radarr.radarr_metadata:
-    name: "Example"
-    config_contract: "MediaBrowserMetadataSettings"
-    implementation: "MediaBrowserMetadata"
+    name: Example
+    config_contract: MediaBrowserMetadataSettings
+    implementation: MediaBrowserMetadata
     enable: true
     fields:
-    - name: "movieMetadata"
-      value: true
+      - name: movieMetadata
+        value: true
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert metadata creation
-  assert:
+- name: Assert metadata creation
+  ansible.builtin.assert:
     that:
       - result['implementation'] == 'MediaBrowserMetadata'
 # ----------------------------------------------------------------------------
-- name: edit already present metadata
+- name: Edit already present metadata
   devopsarr.radarr.radarr_metadata:
-    name: "Example"
-    config_contract: "MediaBrowserMetadataSettings"
-    implementation: "MediaBrowserMetadata"
+    name: Example
+    config_contract: MediaBrowserMetadataSettings
+    implementation: MediaBrowserMetadata
     enable: true
     fields:
-    - name: "movieMetadata"
-      value: false
+      - name: movieMetadata
+        value: false
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert metadata changes
-  assert:
+- name: Assert metadata changes
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: test idempotency
+- name: Test idempotency
   devopsarr.radarr.radarr_metadata:
-    name: "Example"
-    config_contract: "MediaBrowserMetadataSettings"
-    implementation: "MediaBrowserMetadata"
+    name: Example
+    config_contract: MediaBrowserMetadataSettings
+    implementation: MediaBrowserMetadata
     enable: true
     fields:
-    - name: "movieMetadata"
-      value: false
+      - name: movieMetadata
+        value: false
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert metadata idempotency
-  assert:
+- name: Assert metadata idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: delete metadata
+- name: Delete metadata
   devopsarr.radarr.radarr_metadata:
-    name: "Example"
+    name: Example
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
-    state: 'absent'
+    state: absent
   register: result
-- name: assert metadata deletion
-  assert:
+- name: Assert metadata deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0

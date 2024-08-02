@@ -1,23 +1,23 @@
 ---
-- name: list a single indexer schema
+- name: List a single indexer schema
   devopsarr.radarr.radarr_indexer_schema_info:
-    name: "Newznab"
+    name: Newznab
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single indexer
-  assert:
+- name: Assert single indexer
+  ansible.builtin.assert:
     that:
       - result['indexers'][0]['implementation'] == 'Newznab'
 # ----------------------------------------------------------------------------
-- name: list all indexer schemas
+- name: List all indexer schemas
   devopsarr.radarr.radarr_indexer_schema_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple indexer schemas
-  assert:
+- name: Assert multiple indexer schemas
+  ansible.builtin.assert:
     that:
       - result['indexers'] | length > 1

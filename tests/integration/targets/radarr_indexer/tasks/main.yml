@@ -1,176 +1,176 @@
 ---
-- name: create indexer
+- name: Create indexer
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "NewznabSettings"
-    implementation: "Newznab"
-    protocol: "usenet"
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
     fields:
-    - name: "baseUrl"
-      value: "https://lolo.sickbeard.com"
-    - name: "apiPath"
-      value: "/api"
-    - name: "categories"
-      value: [8000, 5000]
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: categories
+        value: [8000, 5000]
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer creation
-  assert:
+- name: Assert indexer creation
+  ansible.builtin.assert:
     that:
       - result['implementation'] == 'Newznab'
 # ----------------------------------------------------------------------------
-- name: edit already present indexer
+- name: Edit already present indexer
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "NewznabSettings"
-    implementation: "Newznab"
-    protocol: "usenet"
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
     fields:
-    - name: "baseUrl"
-      value: "https://lolo.sickbeard.com"
-    - name: "apiPath"
-      value: "/api"
-    - name: "categories"
-      value: [8000, 3000]
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: categories
+        value: [8000, 3000]
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer changes
-  assert:
+- name: Assert indexer changes
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: test idempotency
+- name: Test idempotency
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "NewznabSettings"
-    implementation: "Newznab"
-    protocol: "usenet"
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
     fields:
-    - name: "baseUrl"
-      value: "https://lolo.sickbeard.com"
-    - name: "apiPath"
-      value: "/api"
-    - name: "categories"
-      value: [8000, 3000]
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: categories
+        value: [8000, 3000]
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer idempotency
-  assert:
+- name: Assert indexer idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: delete indexer
+- name: Delete indexer
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
-    state: 'absent'
+    state: absent
   register: result
-- name: assert indexer deletion
-  assert:
+- name: Assert indexer deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0
 # ----------------------------------------------------------------------------
-- name: create another indexer with sensitive values
+- name: Create another indexer with sensitive values
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "FileListSettings"
-    implementation: "FileList"
-    protocol: "torrent"
+    config_contract: FileListSettings
+    implementation: FileList
+    protocol: torrent
     fields:
-    - name: "baseUrl"
-      value: "https://filelist.io"
-    - name: "username"
-      value: "test"
-    - name: "passKey"
-      value: "test"
-    - name: "minimumSeeders"
-      value: 0
+      - name: baseUrl
+        value: https://filelist.io
+      - name: username
+        value: test
+      - name: passKey
+        value: test
+      - name: minimumSeeders
+        value: 0
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer creation
-  assert:
+- name: Assert indexer creation
+  ansible.builtin.assert:
     that:
       - result['implementation'] == 'FileList'
 # ----------------------------------------------------------------------------
-- name: test idempotency
+- name: Test idempotency
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "FileListSettings"
-    implementation: "FileList"
-    protocol: "torrent"
+    config_contract: FileListSettings
+    implementation: FileList
+    protocol: torrent
     fields:
-    - name: "baseUrl"
-      value: "https://filelist.io"
-    - name: "username"
-      value: "test"
-    - name: "passKey"
-      value: "test1"
-    - name: "minimumSeeders"
-      value: 0
+      - name: baseUrl
+        value: https://filelist.io
+      - name: username
+        value: test
+      - name: passKey
+        value: test1
+      - name: minimumSeeders
+        value: 0
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer idempotency
-  assert:
+- name: Assert indexer idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: test key change
+- name: Test key change
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     enable_automatic_search: false
     enable_interactive_search: false
     enable_rss: false
     priority: 10
-    config_contract: "FileListSettings"
-    implementation: "FileList"
-    protocol: "torrent"
+    config_contract: FileListSettings
+    implementation: FileList
+    protocol: torrent
     fields:
-    - name: "baseUrl"
-      value: "https://filelist.io"
-    - name: "username"
-      value: "test"
-    - name: "passKey"
-      value: "test1"
-    - name: "minimumSeeders"
-      value: 0
+      - name: baseUrl
+        value: https://filelist.io
+      - name: username
+        value: test
+      - name: passKey
+        value: test1
+      - name: minimumSeeders
+        value: 0
     update_secrets: true
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert indexer idempotency
-  assert:
+- name: Assert indexer idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: clean up
+- name: Clean up
   devopsarr.radarr.radarr_indexer:
-    name: "Example"
+    name: Example
     state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"

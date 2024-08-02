@@ -1,176 +1,176 @@
 ---
-- name: create root folder dependency
+- name: Create root folder dependency
   devopsarr.radarr.radarr_root_folder:
-    path: '/config'
+    path: /config
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
 
-- name: create import list
+- name: Create import list
   devopsarr.radarr.radarr_import_list:
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: false
     fields:
-      - name: "apiKey"
-        value: "Key"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "profileIds"
+      - name: apiKey
+        value: Key
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    name: "RadarrImport"
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    name: RadarrImport
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list creation
-  assert:
+- name: Assert import list creation
+  ansible.builtin.assert:
     that:
       - result['implementation'] == 'RadarrImport'
 # ----------------------------------------------------------------------------
-- name: edit already present import list
+- name: Edit already present import list
   devopsarr.radarr.radarr_import_list:
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: true
     fields:
-      - name: "apiKey"
-        value: "Key"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "profileIds"
+      - name: apiKey
+        value: Key
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    name: "RadarrImport"
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    name: RadarrImport
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list changes
-  assert:
+- name: Assert import list changes
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: test idempotency
+- name: Test idempotency
   devopsarr.radarr.radarr_import_list:
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: true
     fields:
-      - name: "apiKey"
-        value: "Key"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "profileIds"
+      - name: apiKey
+        value: Key
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    name: "RadarrImport"
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    name: RadarrImport
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list idempotency
-  assert:
+- name: Assert import list idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: test sensitive un-change
+- name: Test sensitive un-change
   devopsarr.radarr.radarr_import_list:
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: true
     fields:
-      - name: "apiKey"
-        value: "KeyEdited"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "profileIds"
+      - name: apiKey
+        value: KeyEdited
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    name: "RadarrImport"
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    name: RadarrImport
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert import list idempotency
-  assert:
+- name: Assert import list idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: test key change
+- name: Test key change
   devopsarr.radarr.radarr_import_list:
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: true
     fields:
-      - name: "apiKey"
-        value: "KeyEdited"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "profileIds"
+      - name: apiKey
+        value: KeyEdited
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    name: "RadarrImport"
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    name: RadarrImport
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
     update_secrets: true
   register: result
-- name: assert import list idempotency
-  assert:
+- name: Assert import list idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == true
 # ----------------------------------------------------------------------------
-- name: delete import list
+- name: Delete import list
   devopsarr.radarr.radarr_import_list:
-    name: "RadarrImport"
+    name: RadarrImport
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
-    state: 'absent'
+    state: absent
   register: result
-- name: assert import list deletion
-  assert:
+- name: Assert import list deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0
 
-- name: clean up root folder
+- name: Clean up root folder
   devopsarr.radarr.radarr_root_folder:
-    path: '/config'
-    state: 'absent'
+    path: /config
+    state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
