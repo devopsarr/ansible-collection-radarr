@@ -1,61 +1,74 @@
 ---
-- name: create import list
+- name: Create root folder dependency
+  devopsarr.radarr.radarr_root_folder:
+    path: /config
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"
+
+- name: Create import list
   devopsarr.radarr.radarr_import_list:
     name: "{{ item }}"
     enable_auto: false
     enabled: false
-    list_type: "program"
+    list_type: program
     list_order: 0
-    monitor: "movieOnly"
-    minimum_availability: "tba"
+    monitor: movieOnly
+    minimum_availability: tba
     quality_profile_id: 1
-    root_folder_path: "/config"
+    root_folder_path: /config
     search_on_add: false
     fields:
-      - name: "apiKey"
-        value: "Key"
-      - name: "baseUrl"
-        value: "localhost"
-      - name: "languageProfileIds"
+      - name: apiKey
+        value: Key
+      - name: baseUrl
+        value: localhost
+      - name: profileIds
         value: [1]
-    config_contract: "RadarrSettings"
-    implementation: "RadarrImport"
+    config_contract: RadarrSettings
+    implementation: RadarrImport
     tags: []
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   with_items:
-    - 'info_test'
-    - 'info_test1'
+    - info_test
+    - info_test1
 
-- name: list a single import list
+- name: List a single import list
   devopsarr.radarr.radarr_import_list_info:
-    name: "info_test"
+    name: info_test
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single import list
-  assert:
+- name: Assert single import list
+  ansible.builtin.assert:
     that:
       - result['import_lists'][0]['name'] == 'info_test'
 # ----------------------------------------------------------------------------
-- name: list all import lists
+- name: List all import lists
   devopsarr.radarr.radarr_import_list_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple import lists
-  assert:
+- name: Assert multiple import lists
+  ansible.builtin.assert:
     that:
       - result['import_lists'] | length > 1
 # ----------------------------------------------------------------------------
-- name: clean up import list
+- name: Clean up import list
   devopsarr.radarr.radarr_import_list:
     name: "{{ item }}"
     state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   with_items:
-    - 'info_test'
-    - 'info_test1'
+    - info_test
+    - info_test1
+
+- name: Clean up root folder
+  devopsarr.radarr.radarr_root_folder:
+    path: /config
+    state: absent
+    radarr_api_key: "{{ radarr_api_key }}"
+    radarr_url: "{{ radarr_url }}"

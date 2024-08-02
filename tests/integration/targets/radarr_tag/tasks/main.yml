@@ -1,34 +1,34 @@
 ---
-- name: create tag
+- name: Create tag
   devopsarr.radarr.radarr_tag:
-    label: 'hello'
+    label: hello
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert tag creation
-  assert:
+- name: Assert tag creation
+  ansible.builtin.assert:
     that:
       - result['label'] == 'hello'
 # ----------------------------------------------------------------------------
-- name: create already present tag
+- name: Create already present tag
   devopsarr.radarr.radarr_tag:
-    label: 'hello'
+    label: hello
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert tag idempotency
-  assert:
+- name: Assert tag idempotency
+  ansible.builtin.assert:
     that:
       - result.changed == false
 # ----------------------------------------------------------------------------
-- name: delete tag
+- name: Delete tag
   devopsarr.radarr.radarr_tag:
-    label: 'hello'
-    state: 'absent'
+    label: hello
+    state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
-- name: assert tag deletion
-  assert:
+- name: Assert tag deletion
+  ansible.builtin.assert:
     that:
       - result['id'] == 0

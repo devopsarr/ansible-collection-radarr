@@ -1,9 +1,9 @@
 ---
-- name: create remote path mapping
+- name: Create remote path mapping
   devopsarr.radarr.radarr_import_list_exclusion:
-    title: 'test'
+    title: test
     year: 1990
-    tmdb_id: '{{ item }}'
+    tmdb_id: "{{ item }}"
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: import_list_exclusions
@@ -11,34 +11,34 @@
     - 54321
     - 654321
 
-- name: list a single remote path mapping
+- name: List a single remote path mapping
   devopsarr.radarr.radarr_import_list_exclusion_info:
     tmdb_id: 654321
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single remote path mapping
-  assert:
+- name: Assert single remote path mapping
+  ansible.builtin.assert:
     that:
       - result['import_list_exclusions'][0]['movie_title'] == 'test'
 # ----------------------------------------------------------------------------
-- name: list all import list exclusion
+- name: List all import list exclusion
   devopsarr.radarr.radarr_import_list_exclusion_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple import list exclusion
-  assert:
+- name: Assert multiple import list exclusion
+  ansible.builtin.assert:
     that:
       - result['import_list_exclusions'] | length > 1
 # ----------------------------------------------------------------------------
-- name: clean up remote path mapping
+- name: Clean up remote path mapping
   devopsarr.radarr.radarr_import_list_exclusion:
-    title: 'test'
+    title: test
     year: 1990
-    tmdb_id: '{{ item }}'
+    tmdb_id: "{{ item }}"
     state: absent
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"

@@ -92,8 +92,10 @@ except ImportError:
 def get_indexer_config(result):
     try:
         return client.get_indexer_config()
+    except radarr.ApiException as e:
+        module.fail_json('Error getting indexer config: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting indexer config: %s' % to_native(e.reason), **result)
+        module.fail_json('Error getting indexer config: {}'.format(to_native(e)), **result)
 
 
 def run_module():

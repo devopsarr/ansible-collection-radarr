@@ -242,8 +242,10 @@ def create_import_list(want, result):
     if not module.check_mode:
         try:
             response = client.create_import_list(import_list_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating import list: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating import list: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating import list: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -251,8 +253,10 @@ def create_import_list(want, result):
 def list_import_lists(result):
     try:
         return client.list_import_list()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing import lists: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing import lists: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing import lists: {}'.format(to_native(e)), **result)
 
 
 def find_import_list(name, result):
@@ -268,8 +272,10 @@ def update_import_list(want, result):
     if not module.check_mode:
         try:
             response = client.update_import_list(import_list_resource=want, id=str(want.id))
+        except radarr.ApiException as e:
+            module.fail_json('Error updating import list: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating import list: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating import list: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -280,8 +286,10 @@ def delete_import_list(result):
         if not module.check_mode:
             try:
                 client.delete_import_list(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting import list: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting import list: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting import list: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 

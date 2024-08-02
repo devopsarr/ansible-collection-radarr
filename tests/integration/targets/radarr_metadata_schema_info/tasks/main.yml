@@ -1,23 +1,23 @@
 ---
-- name: list a single metadata schema
+- name: List a single metadata schema
   devopsarr.radarr.radarr_metadata_schema_info:
-    name: "WdtvMetadata"
+    name: WdtvMetadata
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert single metadata
-  assert:
+- name: Assert single metadata
+  ansible.builtin.assert:
     that:
       - result['metadatas'][0]['implementation'] == 'WdtvMetadata'
 # ----------------------------------------------------------------------------
-- name: list all metadata schemas
+- name: List all metadata schemas
   devopsarr.radarr.radarr_metadata_schema_info:
     radarr_api_key: "{{ radarr_api_key }}"
     radarr_url: "{{ radarr_url }}"
   register: result
 
-- name: assert multiple metadata schemas
-  assert:
+- name: Assert multiple metadata schemas
+  ansible.builtin.assert:
     that:
       - result['metadatas'] | length > 1

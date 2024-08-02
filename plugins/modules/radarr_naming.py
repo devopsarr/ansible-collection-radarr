@@ -116,8 +116,10 @@ def init_module_args():
 def read_naming(result):
     try:
         return client.get_naming_config()
+    except radarr.ApiException as e:
+        module.fail_json('Error getting naming: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting naming: %s' % to_native(e.reason), **result)
+        module.fail_json('Error getting naming: {}'.format(to_native(e)), **result)
 
 
 def update_naming(want, result):
@@ -126,8 +128,10 @@ def update_naming(want, result):
     if not module.check_mode:
         try:
             response = client.update_naming_config(naming_config_resource=want, id="1")
+        except radarr.ApiException as e:
+            module.fail_json('Error updating naming: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating naming: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating naming: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 

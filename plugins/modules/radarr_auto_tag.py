@@ -164,8 +164,10 @@ def create_auto_tagging(want, result):
     if not module.check_mode:
         try:
             response = client.create_auto_tagging(auto_tagging_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating auto tag: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating auto tag: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating auto tag: {}'.format(to_native(e)), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -173,8 +175,10 @@ def create_auto_tagging(want, result):
 def list_auto_taggings(result):
     try:
         return client.list_auto_tagging()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing auto tags: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing auto tags: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing auto tags: {}'.format(to_native(e)), **result)
 
 
 def find_auto_tagging(name, result):
@@ -190,8 +194,10 @@ def update_auto_tagging(want, result):
     if not module.check_mode:
         try:
             response = client.update_auto_tagging(auto_tagging_resource=want, id=str(want.id))
+        except radarr.ApiException as e:
+            module.fail_json('Error updating auto tag: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating auto tag: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating auto tag: {}'.format(to_native(e)), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -202,8 +208,10 @@ def delete_auto_tagging(result):
         if not module.check_mode:
             try:
                 client.delete_auto_tagging(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting auto tag: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting auto tag: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting auto tag: {}'.format(to_native(e)), **result)
             result['id'] = 0
     module.exit_json(**result)
 
