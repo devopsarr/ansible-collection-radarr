@@ -130,8 +130,10 @@ def init_module_args():
 def list_indexers(result):
     try:
         return client.list_indexer()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing indexers: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing indexers: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing indexers: %s' % to_native(e), **result)
 
 
 def populate_indexers(result):

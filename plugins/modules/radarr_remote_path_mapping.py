@@ -107,8 +107,10 @@ def create_remote_path_mapping(want, result):
     if not module.check_mode:
         try:
             response = client.create_remote_path_mapping(remote_path_mapping_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating remote path mapping: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating remote path mapping: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating remote path mapping: %s' % to_native(e), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -116,8 +118,10 @@ def create_remote_path_mapping(want, result):
 def list_remote_path_mappings(result):
     try:
         return client.list_remote_path_mapping()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing remote path mappings: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing remote path mappings: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing remote path mappings: %s' % to_native(e), **result)
 
 
 def find_remote_path_mapping(host, remote_path, local_path, result):
@@ -135,8 +139,10 @@ def update_remote_path_mapping(want, result):
     if not module.check_mode:
         try:
             response = client.update_remote_path_mapping(remote_path_mapping_resource=want, id=str(want.id))
+        except radarr.ApiException as e:
+            module.fail_json('Error updating remote path mapping: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating remote path mapping: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating remote path mapping: %s' % to_native(e), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -147,8 +153,10 @@ def delete_remote_path_mapping(result):
         if not module.check_mode:
             try:
                 client.delete_remote_path_mapping(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting remote path mapping: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting remote path mapping: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting remote path mapping: %s' % to_native(e), **result)
             result['id'] = 0
     module.exit_json(**result)
 

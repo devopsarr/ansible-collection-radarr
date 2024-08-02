@@ -99,8 +99,10 @@ def init_module_args():
 def list_qualities(result):
     try:
         return client.list_quality_definition()
+    except radarr.ApiException as e:
+        module.fail_json('Error getting qualities: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting qualities: %s' % to_native(e.reason), **result)
+        module.fail_json('Error getting qualities: %s' % to_native(e), **result)
 
 
 def populate_qualities(result):

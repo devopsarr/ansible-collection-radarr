@@ -107,8 +107,10 @@ def create_import_list_exclusion(want, result):
     if not module.check_mode:
         try:
             response = client.create_exclusions(import_exclusions_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating import list exclusion: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating import list exclusion: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating import list exclusion: %s' % to_native(e), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -116,8 +118,10 @@ def create_import_list_exclusion(want, result):
 def list_import_list_exclusions(result):
     try:
         return client.list_exclusions()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing import list exclusions: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing import list exclusions: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing import list exclusions: %s' % to_native(e), **result)
 
 
 def find_import_list_exclusion(title, tmdb_id, result):
@@ -134,8 +138,10 @@ def delete_import_list_exclusion(result):
         if not module.check_mode:
             try:
                 client.delete_exclusions(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting import list exclusion: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting import list exclusion: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting import list exclusion: %s' % to_native(e), **result)
             result['id'] = 0
     module.exit_json(**result)
 

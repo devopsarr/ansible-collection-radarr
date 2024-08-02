@@ -203,8 +203,10 @@ def create_download_client(want, result):
     if not module.check_mode:
         try:
             response = client.create_download_client(download_client_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating download client: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating download client: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating download client: %s' % to_native(e), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -212,8 +214,10 @@ def create_download_client(want, result):
 def list_download_clients(result):
     try:
         return client.list_download_client()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing download clients: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing download clients: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing download clients: %s' % to_native(e), **result)
 
 
 def find_download_client(name, result):
@@ -229,8 +233,10 @@ def update_download_client(want, result):
     if not module.check_mode:
         try:
             response = client.update_download_client(download_client_resource=want, id=str(want.id))
+        except radarr.ApiException as e:
+            module.fail_json('Error updating download client: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating download client: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating download client: %s' % to_native(e), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -241,8 +247,10 @@ def delete_download_client(result):
         if not module.check_mode:
             try:
                 client.delete_download_client(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting download client: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting download client: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting download client: %s' % to_native(e), **result)
             result['id'] = 0
     module.exit_json(**result)
 

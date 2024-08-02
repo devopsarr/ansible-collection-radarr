@@ -274,8 +274,10 @@ def create_notification(want, result):
     if not module.check_mode:
         try:
             response = client.create_notification(notification_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating notification: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating notification: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating notification: %s' % to_native(e), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -283,8 +285,10 @@ def create_notification(want, result):
 def list_notifications(result):
     try:
         return client.list_notification()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing notifications: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing notifications: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing notifications: %s' % to_native(e), **result)
 
 
 def find_notification(name, result):
@@ -300,8 +304,10 @@ def update_notification(want, result):
     if not module.check_mode:
         try:
             response = client.update_notification(notification_resource=want, id=str(want.id))
+        except radarr.ApiException as e:
+            module.fail_json('Error updating notification: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error updating notification: %s' % to_native(e.reason), **result)
+            module.fail_json('Error updating notification: %s' % to_native(e), **result)
     # No need to exit module since it will exit by default either way
     result.update(response.model_dump(by_alias=False))
 
@@ -312,8 +318,10 @@ def delete_notification(result):
         if not module.check_mode:
             try:
                 client.delete_notification(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting notification: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting notification: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting notification: %s' % to_native(e), **result)
             result['id'] = 0
     module.exit_json(**result)
 

@@ -82,8 +82,10 @@ def create_tag(want, result):
     if not module.check_mode:
         try:
             response = client.create_tag(tag_resource=want)
+        except radarr.ApiException as e:
+            module.fail_json('Error creating tag: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
-            module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
+            module.fail_json('Error creating tag: %s' % to_native(e), **result)
         result.update(response.model_dump(by_alias=False))
     module.exit_json(**result)
 
@@ -91,8 +93,10 @@ def create_tag(want, result):
 def list_tags(result):
     try:
         return client.list_tag()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing tags: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing tags: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing tags: %s' % to_native(e), **result)
 
 
 def find_tag(label, result):
@@ -108,8 +112,10 @@ def delete_tag(result):
         if not module.check_mode:
             try:
                 client.delete_tag(result['id'])
+            except radarr.ApiException as e:
+                module.fail_json('Error deleting tag: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
             except Exception as e:
-                module.fail_json('Error deleting tag: %s' % to_native(e.reason), **result)
+                module.fail_json('Error deleting tag: %s' % to_native(e), **result)
             result['id'] = 0
     module.exit_json(**result)
 

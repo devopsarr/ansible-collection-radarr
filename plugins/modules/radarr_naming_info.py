@@ -77,8 +77,10 @@ except ImportError:
 def get_naming_config(result):
     try:
         return client.get_naming_config()
+    except radarr.ApiException as e:
+        module.fail_json('Error getting naming: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error getting naming: %s' % to_native(e.reason), **result)
+        module.fail_json('Error getting naming: %s' % to_native(e), **result)
 
 
 def run_module():

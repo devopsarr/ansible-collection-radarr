@@ -105,8 +105,10 @@ def init_module_args():
 def list_metadata_schema(result):
     try:
         return client.list_metadata_schema()
+    except radarr.ApiException as e:
+        module.fail_json('Error listing metadata schemas: %s\n body: %s' % (to_native(e.reason), to_native(e.body)), **result)
     except Exception as e:
-        module.fail_json('Error listing metadata schemas: %s' % to_native(e.reason), **result)
+        module.fail_json('Error listing metadata schemas: %s' % to_native(e), **result)
 
 
 def populate_metadata_schema(result):
