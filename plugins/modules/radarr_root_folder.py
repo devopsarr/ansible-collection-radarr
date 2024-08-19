@@ -34,12 +34,12 @@ EXAMPLES = r'''
 ---
 # Create a root folder
 - name: Create a root folder
-  devopsarr.radarr.root_folder:
+  devopsarr.radarr.radarr_root_folder:
     path: '/series'
 
 # Delete a root folder
 - name: Delete a root_folder
-  devopsarr.radarr.root_folder:
+  devopsarr.radarr.radarr_root_folder:
     path: '/series'
     state: absent
 '''
