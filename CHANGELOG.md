@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/devopsarr/ansible-collection-radarr/compare/v1.1.0...v1.2.0) (2024-10-20)
+
+
+### Features
+
+* **#26:** add min upgrade format score to quality profile ([9e70612](https://github.com/devopsarr/ansible-collection-radarr/commit/9e70612fd7069f7d35279ce741d7eb6555171e29))
+* enable smart colon replacement ([650f7cf](https://github.com/devopsarr/ansible-collection-radarr/commit/650f7cf12916c74ddf1713f9b78e7ab322731f83))
+
+
+### Bug Fixes
+
+* importexclusion api to iportlistexclusion ([85b37c6](https://github.com/devopsarr/ansible-collection-radarr/commit/85b37c6fb14f7fa76880db9cfe1dd3f52238f3bb))
+* pass id to edit instead of str ([6f623b4](https://github.com/devopsarr/ansible-collection-radarr/commit/6f623b48f52c1884ee9075a5fddaba44cbbf2937))
+
 ## [1.1.0](https://github.com/devopsarr/ansible-collection-radarr/compare/v1.0.0...v1.1.0) (2024-08-02)
 
 
