@@ -29,7 +29,7 @@ options:
         description: Colon replacement format.
         required: true
         type: str
-        choices: ["delete", "dash", "spaceDash", "spaceDashSpace"]
+        choices: ["smart", "delete", "dash", "spaceDash", "spaceDashSpace"]
     rename_movies:
         description: Rename movies.
         required: true
@@ -107,7 +107,7 @@ def init_module_args():
     return dict(
         standard_movie_format=dict(type='str', required=True),
         movie_folder_format=dict(type='str', required=True),
-        colon_replacement_format=dict(type='str', required=True, choices=["delete", "dash", "spaceDash", "spaceDashSpace"]),
+        colon_replacement_format=dict(type='str', required=True, choices=["smart", "delete", "dash", "spaceDash", "spaceDashSpace"]),
         rename_movies=dict(type='bool', required=True),
         replace_illegal_characters=dict(type='bool', required=True),
     )
