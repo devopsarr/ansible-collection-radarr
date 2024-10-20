@@ -118,7 +118,7 @@ def run_module():
         supports_check_mode=True,
     )
     # Init client and result.
-    client = radarr.ImportExclusionsApi(module.api)
+    client = radarr.ImportListExclusionApi(module.api)
     result = dict(
         changed=False,
         import_list_exclusions=[],
