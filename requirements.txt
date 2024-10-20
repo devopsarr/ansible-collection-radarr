@@ -1,1 +1,1 @@
-radarr-py==1.1.0
+radarr-py==1.1.1

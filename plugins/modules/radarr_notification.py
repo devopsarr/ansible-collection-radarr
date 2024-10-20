@@ -303,7 +303,7 @@ def update_notification(want, result):
     # Only without check mode.
     if not module.check_mode:
         try:
-            response = client.update_notification(notification_resource=want, id=str(want.id))
+            response = client.update_notification(notification_resource=want, id=want.id)
         except radarr.ApiException as e:
             module.fail_json('Error updating notification: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:

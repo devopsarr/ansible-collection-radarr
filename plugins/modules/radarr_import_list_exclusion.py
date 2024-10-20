@@ -106,7 +106,7 @@ def create_import_list_exclusion(want, result):
     # Only without check mode.
     if not module.check_mode:
         try:
-            response = client.create_exclusions(import_exclusions_resource=want)
+            response = client.create_exclusions(import_list_exclusion_resource=want)
         except radarr.ApiException as e:
             module.fail_json('Error creating import list exclusion: {}\n body: {}'.format(to_native(e.reason), to_native(e.body)), **result)
         except Exception as e:
@@ -157,7 +157,7 @@ def run_module():
     )
 
     # Init client and result.
-    client = radarr.ImportExclusionsApi(module.api)
+    client = radarr.ImportListExclusionApi(module.api)
     result = dict(
         changed=False,
         id=0,
@@ -173,7 +173,7 @@ def run_module():
         delete_import_list_exclusion(result)
 
     # Set wanted resource.
-    want = radarr.ImportExclusionsResource(
+    want = radarr.ImportListExclusionResource(
         tmdb_id=module.params['tmdb_id'],
         movie_year=module.params['year'],
         movie_title=module.params['title'],
