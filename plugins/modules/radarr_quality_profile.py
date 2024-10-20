@@ -36,6 +36,10 @@ options:
         description: Min format score.
         type: int
         default: 0
+    min_upgrade_format_score:
+        description: Min upgrade format score.
+        type: int
+        default: 1
     language:
         description: Language.
         type: dict
@@ -109,6 +113,7 @@ EXAMPLES = r'''
     cutoff: 1
     min_format_score: 0
     cutoff_format_score: 0
+    min_upgrade_format_score: 1
     language:
         name: Any
         id: -1
@@ -170,6 +175,11 @@ min_format_score:
     returned: always
     type: int
     sample: 0
+min_upgrade_format_score:
+    description: Min upgrade format score.
+    returned: always
+    type: int
+    sample: 1
 language:
     description: Language.
     returned: always
@@ -207,6 +217,7 @@ def init_module_args():
         name=dict(type='str', required=True),
         cutoff=dict(type='int'),
         min_format_score=dict(type='int', default=0),
+        min_upgrade_format_score=dict(type='int', default=1),
         cutoff_format_score=dict(type='int', default=0),
         upgrade_allowed=dict(type='bool', default=False),
         language=dict(type='dict', options=dict(
@@ -420,6 +431,7 @@ def run_module():
         upgrade_allowed=module.params['upgrade_allowed'],
         cutoff_format_score=module.params['cutoff_format_score'],
         min_format_score=module.params['min_format_score'],
+        min_upgrade_format_score=module.params['min_upgrade_format_score'],
         language=radarr.Language(
             name=module.params['language']['name'],
             id=module.params['language']['id'],
