@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/devopsarr/ansible-collection-radarr/compare/v1.2.0...v1.2.1) (2025-01-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency radarr-py to v1.2.0 ([bb1a553](https://github.com/devopsarr/ansible-collection-radarr/commit/bb1a553ceebf8deca848c2da4f593f37a3c3cb41))
+* **deps:** update hotio/radarr docker tag to release-5.17.2.9580 ([4e503d5](https://github.com/devopsarr/ansible-collection-radarr/commit/4e503d5b10c084683ad28aa1b1af2ca0427b5e62))
+
 ## [1.2.0](https://github.com/devopsarr/ansible-collection-radarr/compare/v1.1.0...v1.2.0) (2024-10-20)
 
 
